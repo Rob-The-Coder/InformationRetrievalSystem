@@ -5,7 +5,7 @@ import it.unipv.compeng.model.term.Term;
 
 import java.util.Arrays;
 
-public class BTree extends Dictionary<Term, PostingList>{
+public class PrefixBTree extends Dictionary<Term, PostingList>{
   /********************************/
   //NESTED INNER CLASS
   /********************************/
@@ -15,7 +15,7 @@ public class BTree extends Dictionary<Term, PostingList>{
     /********************************/
     private final Term[] keys;
     private final PostingList[] postingLists;
-    private final BTree.BTreeNode[] children;
+    private final PrefixBTree.BTreeNode[] children;
     private int n;
     private boolean leaf;
     /********************************/
@@ -24,7 +24,8 @@ public class BTree extends Dictionary<Term, PostingList>{
     public BTreeNode(int t){
       this.keys=new Term[2 * t - 1];
       this.postingLists=new PostingList[2 * t - 1];
-      this.children=new BTree.BTreeNode[2 * t];
+      this.children=new PrefixBTree.BTreeNode[2 * t];
+      
       this.n=0;
       this.leaf=true;
     }
@@ -39,7 +40,7 @@ public class BTree extends Dictionary<Term, PostingList>{
       this.keys[i]=key;
     }
 
-    public BTree.BTreeNode getChild(int i){
+    public BTreeNode getChild(int i){
       return this.children[i];
     }
 
@@ -47,6 +48,14 @@ public class BTree extends Dictionary<Term, PostingList>{
       this.children[i]=bTreeNode;
     }
 
+    public PostingList getPostingList(int i){
+      return this.postingLists[i];
+    }
+    
+    public void setPostingList(PostingList postingList, int i){
+      this.postingLists[i]=postingList;
+    }
+    
     public boolean isLeaf(){
       return leaf;
     }
@@ -81,7 +90,6 @@ public class BTree extends Dictionary<Term, PostingList>{
     }
 
     private Term computeSeparator(int t){
-
       int i=2;
       Term separator=this.getKey(t - 1).returnDigits(1);
       Term predecessor=this.getKey(t - 2);
@@ -114,7 +122,7 @@ public class BTree extends Dictionary<Term, PostingList>{
   /********************************/
   //Constructor
   /********************************/
-  public BTree(int t){
+  public PrefixBTree(int t){
     this.t=t;
     root=new BTreeNode(t);
   }
@@ -125,6 +133,7 @@ public class BTree extends Dictionary<Term, PostingList>{
   /********************************/
   //Methods
   /********************************/
+  @Override
   public Term search(Term key){
     BTreeNode current=root;
 
@@ -148,12 +157,6 @@ public class BTree extends Dictionary<Term, PostingList>{
     return null;
   }
 
-
-  @Override
-  public Term search(){
-    return null;
-  }
-
   public void traverse(){
     System.out.print("| ");
     root.traverseSubtree();
@@ -169,6 +172,7 @@ public class BTree extends Dictionary<Term, PostingList>{
     //Copying second part of y into z
     for(int j=0; j<(t - 1); j+=1){
       z.setKey(y.getKey(j + t), j);
+      z.setPostingList(y.getPostingList(j + t), j);
     }//end-for
 
     //Copying children
@@ -186,8 +190,10 @@ public class BTree extends Dictionary<Term, PostingList>{
 
     for(int j=x.getN() - 1; j>=i; j-=1){
       x.setKey(x.getKey(j), j + 1);
+      x.setPostingList(x.getPostingList(j), j + 1);
     }//end-for
     x.setKey(y.getKey(this.t - 1), i);
+    x.setPostingList(y.getPostingList(this.t - 1), i);
 
     x.setN(x.getN() + 1);
   }
@@ -208,6 +214,7 @@ public class BTree extends Dictionary<Term, PostingList>{
     //Copying second part of y into z, from the median onward
     for(int j=0; j<t; j+=1){
       z.setKey(y.getKey(j + t - 1), j);
+      z.setPostingList(y.getPostingList(j + t - 1), j);
     }//end-for
 
     //Copying children
@@ -227,51 +234,55 @@ public class BTree extends Dictionary<Term, PostingList>{
 
     for(int j=x.getN() - 1; j>=i; j-=1){
       x.setKey(x.getKey(j), j + 1);
+      x.setPostingList(x.getPostingList(j), j + 1);
     }//end-for
 
     x.setKey(separatorKey, i);
+    x.setPostingList(y.getPostingList(t - 1), i);
 
     x.setN(x.getN() + 1);
   }
 
-  private void insertNonFull(BTreeNode x, Term key){
-    int i=x.getN() - 1;
+  private void insertNonFull(BTreeNode x, Term key, PostingList postingList) {
+    int i = x.getN() - 1;
 
-    if(x.isLeaf()){
-      while(i>=0 && key.compareTo(x.getKey(i))<0){
+    if (x.isLeaf()) {
+      while (i >= 0 && key.compareTo(x.getKey(i)) < 0) {
         x.setKey(x.getKey(i), i + 1);
-        i-=1;
+        x.setPostingList(x.getPostingList(i), i + 1);
+        i -= 1;
       }//end-while
-      i+=1;
+      i += 1;
       x.setKey(key, i);
+      x.setPostingList(postingList, i);
+      
       x.setN(x.getN() + 1);
-    }else{
-      while(i>=0 && key.compareTo(x.getKey(i))<0){
-        i-=1;
+    } else {
+      while (i >= 0 && key.compareTo(x.getKey(i)) < 0) {
+        i -= 1;
       }//end-while
-      i+=1;
+      i += 1;
 
-      if(x.getChild(i).getN() == (2 * t - 1)){
-
+      if (x.getChild(i).getN() == (2 * t - 1)) {
         //If child is a leaf, then it's a term node, hence split adding separator
         //otherwise, if child is a full node of separator we need to split
         //by pushing the median upwards.
-        if(x.getChild(i).isLeaf()){
+        if (x.getChild(i).isLeaf()) {
           splitChild(x, i);
-        }else{
+        } else {
           splitSeparator(x, i);
         }//end-if
 
-        if(key.compareTo(x.getKey(i))>0){
-          i+=1;
+        if (key.compareTo(x.getKey(i)) > 0) {
+          i += 1;
         }//end-if
       }//end-if
-      insertNonFull(x.getChild(i), key);
+      insertNonFull(x.getChild(i), key, postingList);
     }//end-if
   }
 
   @Override
-  public void insert(Term key){
+  public void insert(Term key, PostingList postingList) {
     BTreeNode r=root;
 
     if(r.getN() == (2 * t - 1)){
@@ -289,10 +300,11 @@ public class BTree extends Dictionary<Term, PostingList>{
         splitSeparator(s, 0);
       }//end-if
 
-      insertNonFull(s, key);
+      insertNonFull(s, key, postingList);
     }else{
-      insertNonFull(r, key);
+      insertNonFull(r, key, postingList);
     }//end-if
   }
+
   /********************************/
 }

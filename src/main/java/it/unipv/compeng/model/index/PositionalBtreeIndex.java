@@ -4,15 +4,30 @@ import it.unipv.compeng.model.dictionary.*;
 import it.unipv.compeng.model.postinglist.PositionalPostingList;
 import it.unipv.compeng.model.term.Term;
 
-public class PositionalBtreeIndex extends Index<BTree, PositionalPostingList>{
+public class PositionalBtreeIndex extends Index<PrefixBTree, PositionalPostingList>{
 
   public PositionalBtreeIndex(int t){
-    super(new BTree(t));
+    super(new PrefixBTree(t));
   }
 
   @Override
-  public void addToDictionary(Term t){
-    super.dictionary.insert(t);
+  public PositionalPostingList getPostingList() {
+    return null;
+  }
+
+  @Override
+  public void addToPostingList() {
+
+  }
+
+  @Override
+  public void addToDictionary(Term t) {
+    super.dictionary.insert(t, new PositionalPostingList());
+  }
+
+  @Override
+  public Term search(Term term) {
+    return super.dictionary.search(term);
   }
 
   @Override

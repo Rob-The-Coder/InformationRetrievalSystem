@@ -21,4 +21,9 @@ public class StringTerm extends Term{
   public String toString(){
     return term;
   }
+
+  @Override
+  public boolean equals(Term term) {
+    return this.term.equals(term.toString());
+  }
 }

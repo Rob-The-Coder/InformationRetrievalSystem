@@ -11,15 +11,12 @@ abstract class Index<D extends Dictionary<Term, PostingList>, P extends PostingL
     this.dictionary = dictionary;
   }
 
-  public P getPostingList(){
-    return null;
-  }
+  public abstract P getPostingList();
 
-  public void addToPostingList(){
-
-  }
+  public abstract void addToPostingList();
 
   public abstract void addToDictionary(Term t);
+  public abstract Term search(Term term);
 
   public abstract void traverseDictionary();
 
