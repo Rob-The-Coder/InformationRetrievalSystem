@@ -4,9 +4,9 @@ import it.unipv.compeng.model.dictionary.*;
 import it.unipv.compeng.model.postinglist.PositionalPostingList;
 import it.unipv.compeng.model.term.Term;
 
-public class PositionalBtreeIndex extends Index<PrefixBTree, PositionalPostingList>{
+public class PositionalBTreeIndex extends Index{
 
-  public PositionalBtreeIndex(int t){
+  public PositionalBTreeIndex(int t){
     super(new PrefixBTree(t));
   }
 

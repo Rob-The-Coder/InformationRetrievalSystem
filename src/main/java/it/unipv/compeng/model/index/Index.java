@@ -4,14 +4,14 @@ import it.unipv.compeng.model.dictionary.Dictionary;
 import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.term.Term;
 
-abstract class Index<D extends Dictionary<Term, PostingList>, P extends PostingList>{
-  protected final D dictionary;
+abstract class Index{
+  protected Dictionary<Term, PostingList> dictionary;
 
-  public Index(D dictionary) {
+  public Index(Dictionary<Term, PostingList> dictionary) {
     this.dictionary = dictionary;
   }
 
-  public abstract P getPostingList();
+  public abstract PostingList getPostingList();
 
   public abstract void addToPostingList();
 
@@ -20,7 +20,7 @@ abstract class Index<D extends Dictionary<Term, PostingList>, P extends PostingL
 
   public abstract void traverseDictionary();
 
-  public D getDictionary(){
+  public Dictionary<? extends Term, ? extends PostingList> getDictionary(){
     return dictionary;
   }
 }

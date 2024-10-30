@@ -15,7 +15,7 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
     /********************************/
     private final Term[] keys;
     private final PostingList[] postingLists;
-    private final PrefixBTree.BTreeNode[] children;
+    private final BTreeNode[] children;
     private int n;
     private boolean leaf;
     /********************************/
@@ -24,7 +24,7 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
     public BTreeNode(int t){
       this.keys=new Term[2 * t - 1];
       this.postingLists=new PostingList[2 * t - 1];
-      this.children=new PrefixBTree.BTreeNode[2 * t];
+      this.children=new BTreeNode[2 * t];
       
       this.n=0;
       this.leaf=true;

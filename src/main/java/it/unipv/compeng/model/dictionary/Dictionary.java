@@ -5,8 +5,6 @@ import it.unipv.compeng.model.term.Term;
 
 public abstract class Dictionary<T extends Term, P extends PostingList>{
   public abstract void insert(T term, P postingList);
-
-  public abstract T search(T t);
-
+  public abstract T search(T term);
   public abstract void traverse();
 }

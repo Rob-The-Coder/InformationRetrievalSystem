@@ -33,6 +33,7 @@ public class HashTable extends Dictionary<Term, PostingList>{
     
     public Term search(Term term){
       int i=0;
+
       while(i<chain.size() && !chain.get(i).getTerm().equals(term)){
         i+=1;
       }//end-while
@@ -87,9 +88,6 @@ public class HashTable extends Dictionary<Term, PostingList>{
     //m=Math.pow(2, p);
     m=size;
     cells=new HashCell[(int) (2*m)];
-    for(int i=0; i< cells.length; i+=1){
-      cells[i]=new HashCell();
-    }//end-for
   }
   /********************************/
   //Getter/Setter
@@ -103,7 +101,12 @@ public class HashTable extends Dictionary<Term, PostingList>{
   }
   @Override
   public void insert(Term term, PostingList postingList) {
-    cells[computeHash(term)].insert(term, postingList);
+    int index=computeHash(term);
+
+    if(cells[index]==null){
+      cells[index]=new HashCell();
+    }//end-if
+    cells[index].insert(term, postingList);
   }
 
   @Override

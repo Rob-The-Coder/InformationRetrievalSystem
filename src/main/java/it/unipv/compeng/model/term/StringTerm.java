@@ -1,29 +1,43 @@
 package it.unipv.compeng.model.term;
 
 public class StringTerm extends Term{
-  private final String term;
 
   public StringTerm(String term) {
-    this.term = term;
+    super.termEquivalentString = term;
   }
 
   @Override
   public Term returnDigits(int len){
-    return new StringTerm(term.chars().limit(len).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
+    return new StringTerm(super.termEquivalentString.chars().limit(len).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
   }
 
   @Override
   public int compareTo(Term term){
-    return this.term.compareTo(((StringTerm) term).term);
+    return super.termEquivalentString.compareTo(((StringTerm) term).toString());
   }
 
   @Override
   public String toString(){
-    return term;
+    return super.termEquivalentString;
+  }
+
+  @Override
+  public StringBuilder toStringBuilder(){
+    return new StringBuilder(super.termEquivalentString);
+  }
+
+  @Override
+  public void setString(String string){
+    super.termEquivalentString = string;
   }
 
   @Override
   public boolean equals(Term term) {
-    return this.term.equals(term.toString());
+    return super.termEquivalentString.equals(term.toString());
+  }
+
+  @Override
+  public int hashCode(){
+    return super.termEquivalentString.hashCode();
   }
 }
