@@ -66,18 +66,24 @@ public class SoundedIndex extends Index{
     }//end-for
 
     //Step 3
-    for(int i=1; i<stringBuilder.length(); i+=1){
+    int i=1;
+    while(i<stringBuilder.length()){
       if(stringBuilder.charAt(i)==stringBuilder.charAt(i-1)){
         stringBuilder.deleteCharAt(i);
+      }else{
+        i+=1;
       }//end-if
-    }//end-for
+    }//end-while
 
     //Step 4
-    for(int i=0; i<stringBuilder.length(); i+=1){
+    i=0;
+    while(i<stringBuilder.length()){
       if(stringBuilder.charAt(i)=='0'){
         stringBuilder.deleteCharAt(i);
+      }else{
+        i+=1;
       }//end-if
-    }//end-for
+    }//end-while
 
     //Step 5
     stringBuilder.insert(0, alfa);
