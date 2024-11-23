@@ -1,18 +1,19 @@
 package it.unipv.compeng.model.index;
 
-import it.unipv.compeng.model.dictionary.*;
-import it.unipv.compeng.model.postinglist.PositionalPostingList;
+import it.unipv.compeng.model.dictionary.PrefixBTree;
+import it.unipv.compeng.model.postinglist.PlainPostingList;
+import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.term.Term;
 
-public class PositionalBTreeIndex extends Index{
+public class BTreeIndex extends Index{
   /********************************/
   //Attributes
   /********************************/
 
   /********************************/
-  //Constructor
+  //Constructors
   /********************************/
-  public PositionalBTreeIndex(int t){
+  public BTreeIndex(int t){
     super(new PrefixBTree(t));
   }
   /********************************/
@@ -23,14 +24,13 @@ public class PositionalBTreeIndex extends Index{
   //Methods
   /********************************/
   @Override
-  public PositionalPostingList getPostingList(Term t) {
-    return (PositionalPostingList)super.dictionary.getPostingList(t);
+  public PostingList getPostingList(Term t){
+    return null;
   }
 
   @Override
-  public void addToDictionary(Term t) {
-    super.dictionary.insert(t, new PositionalPostingList());
+  public void addToDictionary(Term t){
+    super.dictionary.insert(t, new PlainPostingList());
   }
-
   /********************************/
 }

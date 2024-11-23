@@ -1,8 +1,9 @@
 package it.unipv.compeng.model.preprocessing;
 
-import it.unipv.compeng.model.document.Document;
 import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.StopList;
+import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable;
+import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
 
 import java.io.IOException;
 import java.text.Normalizer;
@@ -12,31 +13,41 @@ public abstract class Preprocessor{
   /********************************/
   //Attributes
   /********************************/
-  Document document;
+  IDatasetIterator datasetIterator;
   /********************************/
   //Constructors
   /********************************/
-  public Preprocessor(Document document){
-    this.document = document;
+  public Preprocessor(IDatasetIterable dataset){
+    this.datasetIterator = dataset.iterator();
   }
   /********************************/
   //Getter/Setter
   /********************************/
-
+  private int getPosition(){
+    return datasetIterator.getPosition();
+  }
   /********************************/
   //Methods
   /********************************/
-  public final Term[] process() throws IOException{
-    Scanner scanner = new Scanner(document.read());
-    ArrayList<Term> terms = new ArrayList<>();
+  public final boolean hasNextToProcess(){
+    return datasetIterator.hasNext();
+  }
 
-    while (scanner.hasNextLine()) {
+  public final Term[] processNext() throws IOException{
+    ArrayList<Term> terms = new ArrayList<>();
+    Scanner scanner=new Scanner(datasetIterator.next().read());
+
+    int positionInDocument=0;
+    while (scanner.hasNextLine()){
       String line = scanner.nextLine();
 
-      String[] tokens=tokenize(normalize(line));
+      String[] tokens=tokenize(caseFold(normalize(line)));
       for(String token : tokens){
-        if(!StopList.getInstance().contains(token)){
-          terms.add(stem(caseFold(token)));
+        if(!StopList.getInstance().contains(token) && !token.isEmpty()){
+          terms.add(stem(token));
+          terms.getLast().setTermPositionInDocument(positionInDocument);
+          terms.getLast().setDocId(getPosition());
+          positionInDocument+=1;
         }//end-if
       }//end-for-each
     }//end-while
@@ -47,12 +58,12 @@ public abstract class Preprocessor{
 
   protected String[] tokenize(String s){
     return s.replaceAll("\\[.*?]|[-_—   \u200B ]", " ")
-      .replaceAll("['’,.\"?()!;:`‘“/~”…{}+*^«&]", "")
-      .split("\\s| | \n");
+      .replaceAll("[<>'’,.\"?()!;:`‘“/~”…{}+*^«&]", " ")
+      .split("\\s| |\n");
   }
 
   protected String normalize(String s){
-    return Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+    return Normalizer.normalize(s, Normalizer.Form.NFD).replaceAll("[^\\x00-\\x7F]", " ");
   }
 
   protected String caseFold(String s){
@@ -60,6 +71,5 @@ public abstract class Preprocessor{
   }
 
   protected abstract Term stem(String s);
-
   /********************************/
 }

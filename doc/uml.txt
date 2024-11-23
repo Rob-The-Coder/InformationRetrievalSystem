@@ -1,0 +1,100 @@
+@startuml
+!theme carbon-gray
+skinparam linetype ortho
+
+package Term{
+  abstract class Term implements Comparable<Term>{
+    {method} + compareTo(Term term) : int
+    {method} + returnDigits(int len) : term
+    {method} + toString() : String
+    {method} + equals(Term term) : booelan
+    {method} + hashCode() : int
+  }
+
+  class StringTerm extends Term{
+    - String term
+  }
+}
+
+package PostingList{
+  abstract class PostingList{
+    - int docId
+  }
+
+  class PositionalPostingList extends PostingList{
+    - int docFrequency
+    - SortedSet<Integer> positions
+  }
+}
+
+package Dictionary{
+  abstract class Dictionary<T extends Term, P extends PostingList>{
+    {method} + insert(T term, P postingList) : void
+    {method} + search(T term) : Term
+    {method} + traverse() : void
+  }
+
+  package BTree{
+    class PrefixBTree extends Dictionary.Dictionary<Term, PostingList>{
+      - BTreeNode root
+      - int t
+      {method} + PrefixBTree(int t)
+    }
+
+    class BTreeNode{
+      - Term[] keys
+      - PostingList[] postingLists
+      - BTreeNode[] children
+      - int n
+      - boolean leaf
+      {method} + BTreeNode(int t)
+      {method} - computeSeparator(int t) : Term
+    }
+  }
+
+  package HashTable{
+    class HashTable extends Dictionary.Dictionary<Term, PostingList>{
+      - HashCell[] cells
+      - double A
+      - int m
+      - int p
+    }
+
+    class HashTableNode{
+      - Term term
+      - PostingList postingList
+    }
+
+    class HashCell{
+      - LinkedList<HashTableNode> chain
+    }
+  }
+
+}
+
+package Index{
+  abstract class Index<D extends Dictionary<Term, PostingList>, P extends PostingList>{
+    # D dictiionary
+    {method} + Index(D dictionary)
+    {method} + addToDictionary(Term term) : void
+    {method} + search(Term term) : Term
+    {method} + traverseDictionary() : void
+    {method} + getDictionary() : D
+    {method} + getPostingList() : P
+    {method} + addToPostingList() : void
+  }
+
+  class PositionalBTreeIndex extends Index<PrefixBTree, PositionalPostingList>{
+
+  }
+
+  class SoundedIndex extends Index<HashTable, PostingList>{
+
+  }
+}
+
+Dictionary.Dictionary -- Index.Index
+
+hide empty members
+
+@enduml

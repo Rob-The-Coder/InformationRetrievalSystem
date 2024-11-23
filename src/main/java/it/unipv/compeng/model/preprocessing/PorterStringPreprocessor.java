@@ -1,8 +1,8 @@
 package it.unipv.compeng.model.preprocessing;
 
-import it.unipv.compeng.model.document.Document;
 import it.unipv.compeng.model.term.StringTerm;
 import it.unipv.compeng.model.term.Term;
+import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable;
 
 public class PorterStringPreprocessor extends Preprocessor{
   /********************************/
@@ -12,8 +12,8 @@ public class PorterStringPreprocessor extends Preprocessor{
   /********************************/
   //Constructors
   /********************************/
-  public PorterStringPreprocessor(Document document){
-    super(document);
+  public PorterStringPreprocessor(IDatasetIterable dataset){
+    super(dataset);
   }
   /********************************/
   //Getter/Setter

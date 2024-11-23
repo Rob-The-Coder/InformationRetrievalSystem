@@ -4,23 +4,35 @@ import it.unipv.compeng.model.dictionary.Dictionary;
 import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.term.Term;
 
-abstract class Index{
-  protected Dictionary<Term, PostingList> dictionary;
+import java.io.Serializable;
 
+public abstract class Index implements Serializable{
+  /********************************/
+  //Attributes
+  protected Dictionary<Term, PostingList> dictionary;
+  /********************************/
+  //Constructor
+  /********************************/
   public Index(Dictionary<Term, PostingList> dictionary) {
     this.dictionary = dictionary;
   }
+  /********************************/
+  //Getter/Setter
+  /********************************/
 
-  public abstract PostingList getPostingList();
-
-  public abstract void addToPostingList();
+  /********************************/
+  //Methods
+  /********************************/
+  public abstract PostingList getPostingList(Term t);
 
   public abstract void addToDictionary(Term t);
-  public abstract Term search(Term term);
 
-  public abstract void traverseDictionary();
-
-  public Dictionary<? extends Term, ? extends PostingList> getDictionary(){
-    return dictionary;
+  public void traverseDictionary(){
+    this.dictionary.traverse();
   }
+
+//  public Dictionary<? extends Term, ? extends PostingList> getDictionary(){
+//    return dictionary;
+//  }
+  /********************************/
 }

@@ -3,13 +3,14 @@ package it.unipv.compeng.model.dictionary;
 import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.term.Term;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 public class PrefixBTree extends Dictionary<Term, PostingList>{
   /********************************/
   //NESTED INNER CLASS
   /********************************/
-  private static class BTreeNode{
+  private static class BTreeNode implements Serializable{
     /********************************/
     //Attributes
     /********************************/
@@ -80,8 +81,10 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
       for(i=0; i<getN(); i+=1){
         if(!isLeaf()){
           getChild(i).traverseSubtree();
+        }else{
+//        System.out.print(getKey(i).toString() + ": " + getPostingList(i).toString() + " | ");
+          System.out.print(getKey(i).toString() + " | ");
         }//end-if
-        System.out.print(getKey(i).toString() + " | ");
       }//end-for
 
       if(!isLeaf()){
@@ -111,13 +114,12 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
         ", leaf=" + leaf +
         '}';
     }
-
     /********************************/
   }
   /********************************/
   //Attributes
   /********************************/
-  BTreeNode root;
+  private BTreeNode root;
   private final int t;
   /********************************/
   //Constructor
@@ -146,6 +148,29 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
 
       if(i<current.getN() && key.compareTo(current.getKey(i)) == 0){
         return current.getKey(i);
+      }//end-if
+
+      if(current.isLeaf()){
+        return null;
+      }else{
+        current=current.getChild(i);
+      }//end-if
+    }//end-while
+    return null;
+  }
+
+  private BTreeNode getNode(Term t){
+    BTreeNode current=root;
+
+    while(current != null){
+      int i=0;
+
+      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
+        i+=1;
+      }//end-while
+
+      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
+        return current;
       }//end-if
 
       if(current.isLeaf()){
@@ -283,27 +308,91 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
 
   @Override
   public void insert(Term key, PostingList postingList) {
-    BTreeNode r=root;
 
-    if(r.getN() == (2 * t - 1)){
-      BTreeNode s=new BTreeNode(this.t);
-      root=s;
-      s.setLeaf(false);
-      s.setN(0);
-      s.setChild(r, 0);
+    BTreeNode r;
+    if((r=getNode(key))==null){
+      //Node not present, inserting
+      r=root;
 
-      //if root node is a term node, then split it by creating a separator
-      //otherwise if the root is made of separator split it by pushing the median upwards.
-      if(r.isLeaf()){
-        splitChild(s, 0);
+      if(r.getN() == (2 * t - 1)){
+        BTreeNode s=new BTreeNode(this.t);
+        root=s;
+        s.setLeaf(false);
+        s.setN(0);
+        s.setChild(r, 0);
+
+        //if root node is a term node, then split it by creating a separator
+        //otherwise if the root is made of separator split it by pushing the median upwards.
+        if(r.isLeaf()){
+          splitChild(s, 0);
+        }else{
+          splitSeparator(s, 0);
+        }//end-if
+
+        insertNonFull(s, key, postingList);
       }else{
-        splitSeparator(s, 0);
+        insertNonFull(r, key, postingList);
+      }//end-if
+    }else{
+      //Node present, identifying correct posting list
+      int i=0;
+
+      while(i<r.getN() && key.compareTo(r.getKey(i))>0){
+        i+=1;
+      }//end-while
+
+      if(i<r.getN() && key.compareTo(r.getKey(i)) == 0){
+        postingList=r.getPostingList(i);
+      }//end-if
+    }//end-if
+    postingList.addToPostingList(key);
+  }
+
+  @Override
+  public void addToPostingList(Term t){
+    BTreeNode current=root;
+
+    while(current != null){
+      int i=0;
+
+      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
+        i+=1;
+      }//end-while
+
+      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
+        current.postingLists[i].addToPostingList(t);
       }//end-if
 
-      insertNonFull(s, key, postingList);
-    }else{
-      insertNonFull(r, key, postingList);
-    }//end-if
+      if(current.isLeaf()){
+        current=null;
+      }else{
+        current=current.getChild(i);
+      }//end-if
+    }//end-while
+  }
+
+  @Override
+  public PostingList getPostingList(Term t){
+    BTreeNode current=root;
+
+    while(current != null){
+      int i=0;
+
+      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
+        i+=1;
+      }//end-while
+
+      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
+        return current.getPostingList(i);
+      }//end-if
+
+      if(current.isLeaf()){
+        current=null;
+      }else{
+        current=current.getChild(i);
+      }//end-if
+    }//end-while
+    return null;
   }
 
   /********************************/

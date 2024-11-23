@@ -1,12 +1,10 @@
-package it.unipv.compeng.model.document;
+package it.unipv.compeng.exceptions;
 
-import java.io.IOException;
-
-public abstract class Document{
+public class InvalidStrategyException extends Exception{
   /********************************/
   //Attributes
   /********************************/
-  private int docId;
+
   /********************************/
   //Constructors
   /********************************/
@@ -18,6 +16,6 @@ public abstract class Document{
   /********************************/
   //Methods
   /********************************/
-  public abstract String read() throws IOException;
+
   /********************************/
 }

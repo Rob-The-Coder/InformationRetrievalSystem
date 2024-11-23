@@ -1,42 +1,42 @@
 package it.unipv.compeng.model.index;
 
 import it.unipv.compeng.model.dictionary.HashTable;
+import it.unipv.compeng.model.postinglist.PlainPostingList;
+import it.unipv.compeng.model.postinglist.PositionalPostingList;
 import it.unipv.compeng.model.postinglist.SkippingPostingList;
 import it.unipv.compeng.model.term.Term;
 
 public class SoundedIndex extends Index{
-  public SoundedIndex(int size) {
+  public SoundedIndex(int size){
     super(new HashTable(size));
   }
 
   @Override
-  public SkippingPostingList getPostingList() {
+  public SkippingPostingList getPostingList(Term t) {
     return null;
   }
 
-  @Override
-  public void addToPostingList() {
-    
-  }
+//  @Override
+//  public void addToPostingList(Term t) {
+//    classifyTerm(t);
+//    super.dictionary.addToPostingList(t);
+//  }
 
   @Override
   public void addToDictionary(Term term) {
-    classifyTerm(term);
+    if(!term.toStringBuilder().isEmpty()){
+      classifyTerm(term);
 
-    super.dictionary.insert(term, new SkippingPostingList());
+      super.dictionary.insert(term, new PlainPostingList());
+    }//end-if
   }
 
-  @Override
-  public Term search(Term term) {
-    classifyTerm(term);
-
-    return super.dictionary.search(term);
-  }
-
-  @Override
-  public void traverseDictionary() {
-
-  }
+//  @Override
+//  public Term search(Term term) {
+//    classifyTerm(term);
+//
+//    return super.dictionary.search(term);
+//  }
 
   private void classifyTerm(Term t){
     //Theoretically term should arrive case folded
