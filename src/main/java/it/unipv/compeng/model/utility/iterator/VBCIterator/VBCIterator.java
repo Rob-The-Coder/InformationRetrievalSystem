@@ -2,6 +2,7 @@ package it.unipv.compeng.model.utility.iterator.VBCIterator;
 
 import it.unipv.compeng.model.utility.VariableByteCode;
 
+import java.util.Arrays;
 import java.util.BitSet;
 public class VBCIterator implements IVBCIterator{
   /********************************/
@@ -39,16 +40,15 @@ public class VBCIterator implements IVBCIterator{
     this.pointer+=Byte.SIZE;
 
     BitSet code=this.vbc.getCode();
-    BitSet tmp=new BitSet(code.length());
+    BitSet tmp=new BitSet();
 
-    int i=0, lastK=0;
+    int i=0, con=0, numberOfBytes=0;
     boolean terminationBit=false;
     while(!terminationBit && this.pointer<this.vbc.getCurrentNumberOfBytes()*Byte.SIZE){
-      //If first bit is not the terminator bit 1, I can simply read the next seven bits
+      //Reading the 7 next bits from the termination bit
       for(int j=0; j<Byte.SIZE-1; j+=1){
-        int k=j + (i*(Byte.SIZE-1));
-        tmp.set(k, code.get(k+i+1));
-        lastK=k;
+        tmp.set(con, code.get(this.pointer+j+1));
+        con+=1;
       }//end-for
 
       //Checking if pointed bit is the termination bit
@@ -59,15 +59,30 @@ public class VBCIterator implements IVBCIterator{
         this.pointer+=Byte.SIZE;
         i+=1;
       }//end-if
+
+      numberOfBytes+=1;
     }//end-while
 
     int ris=0;
-    int fin=lastK;
-    for(i=0; i<=fin; i+=1){
-      ris=(int)(ris+(Math.pow(2, fin-i) * (tmp.get(i)? 1 : 0)));
+    int fin=(numberOfBytes*Byte.SIZE) - numberOfBytes;
+    for(i=1; i<=fin; i+=1){
+      ris+=(int)(Math.pow(2, fin-i)*(tmp.get(i-1)?1:0));
     }//end-for
-
+    
     return ris;
+  }
+
+  public static void main(String[] args){
+    VariableByteCode vbc=new VariableByteCode();
+
+    vbc.add(100);
+    vbc.add(228);
+    vbc.add(230);
+    vbc.add(65766);
+    vbc.add(70000);
+
+    System.out.println(vbc);
+    System.out.println(Arrays.toString(vbc.toArray()));
   }
   /********************************/
 }

@@ -17,7 +17,7 @@ public class Indexer{
   //Constructors
   /********************************/
   public Indexer(){
-    executor=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    init();
   }
   /********************************/
   //Getter/Setter

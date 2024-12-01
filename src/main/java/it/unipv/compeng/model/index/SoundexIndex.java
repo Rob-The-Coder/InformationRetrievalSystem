@@ -1,18 +1,22 @@
 package it.unipv.compeng.model.index;
 
-import it.unipv.compeng.model.dictionary.HashTable;
+import it.unipv.compeng.model.dictionary.PrefixBTree;
 import it.unipv.compeng.model.postinglist.PlainPostingList;
-import it.unipv.compeng.model.postinglist.PositionalPostingList;
-import it.unipv.compeng.model.postinglist.SkippingPostingList;
+import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.term.Term;
 
-public class SoundedIndex extends Index{
-  public SoundedIndex(int size){
-    super(new HashTable(size));
+public class SoundexIndex extends Index{
+  public SoundexIndex(){
+    super(new PrefixBTree(2));
   }
 
   @Override
-  public SkippingPostingList getPostingList(Term t) {
+  public PostingList getPostingList(Term t) {
+    if(!t.toStringBuilder().isEmpty()){
+      classifyTerm(t);
+
+      return super.dictionary.getPostingList(t);
+    }//end-if
     return null;
   }
 

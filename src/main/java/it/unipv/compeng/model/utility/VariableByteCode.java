@@ -5,13 +5,15 @@ import it.unipv.compeng.model.utility.iterator.VBCIterator.IVBCIterator;
 import it.unipv.compeng.model.utility.iterator.VBCIterator.VBCIterator;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 
 public class VariableByteCode implements IVBCIterable, Serializable{
   /********************************/
   //Attributes
   /********************************/
-  private BitSet code;
+  private final BitSet code;
   private int currentNumberOfBytes;
   private transient int lastInserted;
   /********************************/
@@ -90,47 +92,78 @@ public class VariableByteCode implements IVBCIterable, Serializable{
   private void addGap(int gap){
     //Converting gap to variable byte code binary representation
     int necessaryBits=gap==0 ? 1 : (int)Math.floor(Math.log(gap)/Math.log(2))+1;
+    int necessaryBytes=(int)Math.ceil((double)necessaryBits / (Byte.SIZE - 1));
+    int padding=((necessaryBytes*Byte.SIZE) - necessaryBytes) - necessaryBits;
+//    System.out.println("padding: " + padding);
 
     //Conversion of gap in binary
     BitSet binaryGap=new BitSet(necessaryBits);
     int con=0;
-    boolean firstZeroEncountered=false;
+    boolean firstOneEncountered=false;
     for(int i=Integer.SIZE-1; i>=0; i-=1){
       int k = gap >> i;
       if((k & 1) > 0){
         binaryGap.set(con);
-        firstZeroEncountered=true;
+        firstOneEncountered=true;
       }//end-if
-      if(firstZeroEncountered){
+      if(firstOneEncountered){
         con+=1;
       }//end-if
     }//end-for
+//    print(binaryGap);
 
-    // Size of an integer is assumed to be 32 bits
     int j=currentNumberOfBytes*Byte.SIZE;
-    int i=0;
-    int byteEndIndex=j+Byte.SIZE-1;
-
-    while(i<necessaryBits){
-      //Termination bit logic
-      if(j%Byte.SIZE==0){
-        //If the remaining bits are less than 7 (7+1=8) then we put 1
-        if(necessaryBits-i<=Byte.SIZE-1){
-          code.set(j);
-        }//end-if
-
-        //Incrementing pointer to the end of the byte
-        if(j!=0){
-          byteEndIndex+=Byte.SIZE;
-        }//end-if
-        currentNumberOfBytes+=1;
-      }else{
-        //i is the pointer to binaryGap, byteEndIndex is the pointer to the end of the current byte
-        code.set((byteEndIndex-(i%(Byte.SIZE-1))), binaryGap.get(i));
-        i+=1;
+    con=0;
+    for(int i=0; i<necessaryBytes; i+=1){
+      if(i==necessaryBytes-1){
+        code.set(j);
       }//end-if
       j+=1;
-    }//end-while
+
+      //Padding
+      int k=0;
+      while(padding>0 && k<(Byte.SIZE-1)){
+        code.set(j, false);
+        padding-=1;
+        j+=1;
+        k+=1;
+      }//end-while
+
+      //Inserting actual bits
+      while(k<(Byte.SIZE-1)){
+        code.set(j, binaryGap.get(con));
+        k+=1;
+        j+=1;
+        con+=1;
+      }//end-while
+      this.currentNumberOfBytes+=1;
+    }//end-for
+
+//    // Size of an integer is assumed to be 32 bits
+//    int j=currentNumberOfBytes*Byte.SIZE;
+//    int i=0;
+//    int byteEndIndex=j+Byte.SIZE-1;
+//
+//    while(i<necessaryBits){
+//      //Termination bit logic
+//      if(j%Byte.SIZE==0){
+//        //If the remaining bits are less than 7 (7+1=8) then we put 1
+//        if(necessaryBits-i<=Byte.SIZE-1){
+//          code.set(j);
+//        }//end-if
+//
+//        //Incrementing pointer to the end of the byte
+//        if(j!=0){
+//          byteEndIndex+=Byte.SIZE;
+//        }//end-if
+//        currentNumberOfBytes+=1;
+//      }else{
+//        //i is the pointer to binaryGap, byteEndIndex is the pointer to the end of the current byte
+//        code.set((byteEndIndex-(i%(Byte.SIZE-1))), binaryGap.get(i));
+//        i+=1;
+//      }//end-if
+//      j+=1;
+//    }//end-while
   }
 
   public boolean search(int n){
@@ -222,6 +255,27 @@ public class VariableByteCode implements IVBCIterable, Serializable{
     }//end-for
 
     return sb.toString();
+
+//    StringBuilder sb=new StringBuilder("[ ");
+//    int[] array=toArray();
+//    for(int i: array){
+//      sb.append(i).append(" ");
+//    }//end-for
+//    sb.append("]");
+//
+//    return sb.toString();
+  }
+
+  public int[] toArray(){
+    ArrayList<Integer> list=new ArrayList<>();
+    IVBCIterator iterator=iterator();
+    int prev=0;
+    while(iterator.hasNext()){
+      prev=prev+iterator.next();
+      list.add(prev);
+    }//end-while
+
+    return list.stream().mapToInt(i->i).toArray();
   }
 
   @Override

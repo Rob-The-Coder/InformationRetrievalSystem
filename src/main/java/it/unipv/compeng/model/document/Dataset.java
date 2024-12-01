@@ -43,7 +43,7 @@ public class Dataset implements IDatasetIterable{
   public Dataset clone(){
     Dataset dataset = new Dataset();
     for(Document document : documents){
-      dataset.add(document);
+      dataset.add(document.clone());
     }//end-for
     return dataset;
   }

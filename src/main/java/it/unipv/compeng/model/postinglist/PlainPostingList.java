@@ -64,6 +64,5 @@ public class PlainPostingList extends PostingList implements Serializable{
   public String toString(){
     return super.compressedDocIds.toString();
   }
-
   /********************************/
 }

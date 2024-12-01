@@ -54,5 +54,11 @@ public class SampleTextDocument extends Document{
 
     return text.toString();
   }
+
+  @Override
+  public Document clone(){
+    return new SampleTextDocument(sampleText.getPath());
+  }
+
   /********************************/
 }

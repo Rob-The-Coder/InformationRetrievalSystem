@@ -19,5 +19,6 @@ public abstract class Document{
   //Methods
   /********************************/
   public abstract String read() throws IOException;
+  public abstract Document clone();
   /********************************/
 }

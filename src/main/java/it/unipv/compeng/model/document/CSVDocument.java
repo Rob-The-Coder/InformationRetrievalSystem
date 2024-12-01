@@ -21,5 +21,11 @@ public class CSVDocument extends Document{
   public String read() throws IOException{
     return "";
   }
+
+  @Override
+  public Document clone(){
+    return null;
+  }
+
   /********************************/
 }

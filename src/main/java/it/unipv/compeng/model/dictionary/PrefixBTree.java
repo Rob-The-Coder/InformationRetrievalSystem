@@ -373,25 +373,17 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
 
   @Override
   public PostingList getPostingList(Term t){
-    BTreeNode current=root;
+    BTreeNode node=getNode(t);
 
-    while(current != null){
+    if(node!=null){
       int i=0;
-
-      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
+      while(node.getKey(i).compareTo(t)!=0){
         i+=1;
       }//end-while
 
-      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
-        return current.getPostingList(i);
-      }//end-if
+      return node.getPostingList(i);
+    }//end-if
 
-      if(current.isLeaf()){
-        current=null;
-      }else{
-        current=current.getChild(i);
-      }//end-if
-    }//end-while
     return null;
   }
 

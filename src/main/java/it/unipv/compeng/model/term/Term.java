@@ -3,8 +3,8 @@ package it.unipv.compeng.model.term;
 import java.io.Serializable;
 public abstract class Term implements Comparable<Term>, Serializable{
   protected String termEquivalentString;
-  protected int docId;
-  protected int termPositionInDocument;
+  protected transient int docId;
+  protected transient int termPositionInDocument;
 
   public int getDocId(){
     return docId;

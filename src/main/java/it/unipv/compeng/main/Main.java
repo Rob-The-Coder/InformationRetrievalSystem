@@ -1,20 +1,20 @@
 package it.unipv.compeng.main;
 import it.unipv.compeng.exceptions.InvalidStrategyException;
-import it.unipv.compeng.model.dictionary.PrefixBTree;
 import it.unipv.compeng.model.document.Dataset;
 import it.unipv.compeng.model.document.SampleTextDocument;
 import it.unipv.compeng.model.index.*;
 import it.unipv.compeng.model.indexer.Indexer;
 import it.unipv.compeng.model.indexer.SPIMIStrategy;
-import it.unipv.compeng.model.postinglist.PlainPostingList;
+import it.unipv.compeng.model.preprocessing.PlainStringPreprocessor;
 import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
 import it.unipv.compeng.model.preprocessing.Preprocessor;
 import it.unipv.compeng.model.term.StringTerm;
-import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
 import javafx.application.Application;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class Main extends Application{
   public static String SONGS_FOLDER="/home/roberto/Scaricati/Songs/";
@@ -23,29 +23,38 @@ public class Main extends Application{
 
   public static void main(String[] args) throws IOException, InvalidStrategyException, ClassNotFoundException, Throwable{
     //Must be done in a more elegant way, as of now is just for testing purposes
-    File[] listOfFiles=new File(SONGS_FOLDER).listFiles();
-    Dataset dataset=new Dataset();
-    for(int i=0; i<listOfFiles.length; i+=1){
-      dataset.add(new SampleTextDocument(listOfFiles[i]));
-    }//end-for
-
-    //Ideally I'd like to run the two indexing algorithms in parallel via threads, don't really know what's the best approach.
-    Preprocessor[] preprocessors={new PorterStringPreprocessor(dataset.clone()), new PorterStringPreprocessor(dataset.clone())};
-    Index[] indexes={new BTreeIndex(2), new SoundedIndex(1000000)};
-    for(int i=0; i<indexes.length; i+=1){
-      Indexer.getInstance().setStrategy(new SPIMIStrategy(indexes[i], preprocessors[i]));
-      Indexer.getInstance().index();
-    }//end-for
-    Indexer.getInstance().stop();
+//    File[] listOfFiles=new File(SONGS_FOLDER).listFiles();
+//    Dataset dataset=new Dataset();
+//    for(int i=0; i<listOfFiles.length; i+=1){
+//      dataset.add(new SampleTextDocument(listOfFiles[i]));
+//    }//end-for
+//
+//    //Ideally I'd like to run the two indexing algorithms in parallel via threads, don't really know what's the best approach.
+//    Preprocessor[] preprocessors={new PorterStringPreprocessor(dataset.clone()), new PlainStringPreprocessor(dataset.clone())};
+//    Index[] indexes={new BTreeIndex(2), new SoundexIndex()};
+//    for(int i=0; i<indexes.length; i+=1){
+//      Indexer.getInstance().setStrategy(new SPIMIStrategy(indexes[i], preprocessors[i]));
+//      Indexer.getInstance().index();
+//    }//end-for
+//    Indexer.getInstance().stop();
 
 //    Indexer.getInstance().setStrategy(new LMStrategy(new SoundedIndex(dataset.size()), preprocessor));
 //    Indexer.getInstance().index();
 
-//    FileInputStream fileInputStream=new FileInputStream("/home/roberto/Scaricati/NormalIndex.txt");
-//    ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
-//    Index i = (Index) objectInputStream.readObject();
-//    objectInputStream.close();
+    FileInputStream fileInputStream=new FileInputStream("/home/roberto/Scaricati/"+ BTreeIndex.class.getName() +".txt");
+    ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
+    Index i = (Index) objectInputStream.readObject();
+    objectInputStream.close();
+    FileInputStream fileInputStream2=new FileInputStream("/home/roberto/Scaricati/"+ SoundexIndex.class.getName() +".txt");
+    ObjectInputStream objectInputStream2=new ObjectInputStream(fileInputStream2);
+    Index i2 = (Index) objectInputStream2.readObject();
+    objectInputStream2.close();
+
 //    i.traverseDictionary();
+    //TODO: insertion sort for docIDs, since in soundex index there's no guaranteed that docIds are in order
+    System.out.println(i.getPostingList(new StringTerm("zucchini")));
+    System.out.println(Arrays.toString(i.getPostingList(new StringTerm("battleground")).toArray()));
+    System.out.println(Arrays.toString(i2.getPostingList(new StringTerm("zucchini")).toArray()));
 
 //    Map<String, Integer> hashMap = new HashMap<>();
 //    while(preprocessor.hasNextToProcess()){
@@ -87,20 +96,24 @@ public class Main extends Application{
 //      System.out.println(soundedIndex.search(new StringTerm(word)));
 //    }
 
-//    //CSV, 0 and 6 are respectively the title and the lyrics.
-//    String path = "/home/roberto/Scaricati/dataset_reduced.csv";
+    //CSV, 0 and 6 are respectively the title and the lyrics.
+//    String oldPath="/home/roberto/Scaricati/song_lyrics.csv";
+//    String path = "/home/roberto/Scaricati/dataset_en.csv";
 //    String newPath="/home/roberto/Scaricati/dataset_reduced.csv";
-//    try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(path)).withSkipLines(0).withCSVParser(new RFC4180ParserBuilder().build()).build()) {
+////    HashSet<String> hashSet=new HashSet<>();
+//    try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(newPath)).withSkipLines(0).withCSVParser(new RFC4180ParserBuilder().build()).build()) {
 ////      CSVWriter csvWriter = new CSVWriter(new FileWriter(newPath));
 //      String[] values = null;
 ////      int i=0;
 //      while (((values = csvReader.readNext()) != null)) {
-////          System.out.println(values[1]);
+////        hashSet.add(values[10]);
+////        System.out.println(Arrays.toString(values));
 ////          if(values[1].equals("rock")){
 ////            csvWriter.writeNext(new String[]{values[0], values[6]});
+//////            csvWriter.writeNext(new String[]{values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10]});
 ////          }//end-if
 //          String title=values[0].replaceAll("[^a-zA-Z0-9-_\\.]", "_");
-//          BufferedWriter writer = new BufferedWriter(new FileWriter(songsFolder+title.substring(0, Math.min(title.length(), 250))+".txt"));
+//          BufferedWriter writer = new BufferedWriter(new FileWriter(SONGS_FOLDER+title.substring(0, Math.min(title.length(), 250))+".txt"));
 //          writer.write(values[1]);
 //          writer.close();
 ////        i+=1;
@@ -112,6 +125,8 @@ public class Main extends Application{
 //    catch(IOException | CsvValidationException e){
 //      throw new RuntimeException(e);
 //    }
+//    System.out.println("Done");
+//    hashSet.forEach(System.out::println);
 
 //To copy files from a directory to another
 //    InputStream in = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
@@ -123,7 +138,7 @@ public class Main extends Application{
 //      out.write(buffer, 0, lengthRead);
 //      out.flush();
 //    }
-    //launch();
+    launch();
   }
 
   @Override

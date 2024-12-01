@@ -2,6 +2,7 @@ package it.unipv.compeng.model.postinglist;
 
 import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.VariableByteCode;
+import it.unipv.compeng.model.utility.iterator.VBCIterator.IVBCIterator;
 
 import java.util.ArrayList;
 public abstract class PostingList{
@@ -53,5 +54,9 @@ public abstract class PostingList{
   }
 
   public abstract void addToPostingList(Term t);
+
+  public int[] toArray(){
+    return compressedDocIds.toArray();
+  }
   /********************************/
 }

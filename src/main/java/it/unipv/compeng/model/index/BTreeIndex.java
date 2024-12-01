@@ -25,7 +25,7 @@ public class BTreeIndex extends Index{
   /********************************/
   @Override
   public PostingList getPostingList(Term t){
-    return null;
+    return super.dictionary.getPostingList(t);
   }
 
   @Override

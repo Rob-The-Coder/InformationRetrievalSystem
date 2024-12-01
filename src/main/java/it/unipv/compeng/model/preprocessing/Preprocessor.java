@@ -57,7 +57,7 @@ public abstract class Preprocessor{
   }
 
   protected String[] tokenize(String s){
-    return s.replaceAll("\\[.*?]|[-_—   \u200B ]", " ")
+    return s.replaceAll("\\[.*?]|[-_—   \u200B \u007F]", " ")
       .replaceAll("[<>'’,.\"?()!;:`‘“/~”…{}+*^«&]", " ")
       .split("\\s| |\n");
   }

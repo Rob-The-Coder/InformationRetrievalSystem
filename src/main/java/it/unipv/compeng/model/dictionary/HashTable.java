@@ -5,6 +5,7 @@ import it.unipv.compeng.model.term.Term;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class HashTable extends Dictionary<Term, PostingList> implements Serializable{
@@ -15,12 +16,12 @@ public class HashTable extends Dictionary<Term, PostingList> implements Serializ
     /********************************/
     //Attributes
     /********************************/
-    private final LinkedList<HashTableNode> chain;
+    private final ArrayList<HashTableNode> chain;
     /********************************/
     //Constructor
     /********************************/
     public HashCell(){
-      chain=new LinkedList<>();
+      chain=new ArrayList<>();
     }
     /********************************/
     //Getter/Setter
@@ -33,15 +34,42 @@ public class HashTable extends Dictionary<Term, PostingList> implements Serializ
       chain.add(new HashTableNode(term, postingList));
     }
     
-    public Term search(Term term){
-      int i=0;
+    public Term search(Term t){
+//      int i=0;
+//
+//      while(i<chain.size() && !chain.get(i).getTerm().equals(term)){
+//        i+=1;
+//      }//end-while
+//
+//      if(i<chain.size()){
+//        return chain.get(i).getTerm();
+//      }else{
+//        return null;
+//      }//end-if
 
-      while(i<chain.size() && !chain.get(i).getTerm().equals(term)){
-        i+=1;
+      //Binary search term in chain
+      int left=0, right=chain.size()-1, i=-1;
+      boolean found=false;
+      while(left<=right && !found){
+        int mid=left+(right-left)/2;
+
+        // Check if x is present at mid
+        if(t.compareTo(chain.get(mid).term)==0){
+          found=true;
+          i=mid;
+        }//end-if
+
+        // If x greater, ignore left half
+        if(chain.get(mid).getTerm().compareTo(t)<0){
+          left=mid + 1;
+          // If x is smaller, ignore right half
+        }else{
+          right=mid - 1;
+        }//end-if
       }//end-while
-      
-      if(i<chain.size()){
-        return chain.get(i).getTerm();
+
+      if(i!=-1){
+        return chain.get(i).term;
       }else{
         return null;
       }//end-if
@@ -99,7 +127,17 @@ public class HashTable extends Dictionary<Term, PostingList> implements Serializ
   //Methods
   /********************************/
   private int computeHash(Term term){
-    return (int) Math.floor(m*((term.hashCode()*A) % 1));
+    String s=term.toString();
+    int p=53;
+    int m=100000000+9;
+    int hash=0;
+
+    for(int i=0; i<s.length(); i+=1){
+      hash+=(int)(s.charAt(i)*Math.pow(p, i));
+    }//end-for
+    return hash%m;
+
+//    return (int) Math.floor(m*((term.hashCode()*A) % 1));
   }
   @Override
   public void insert(Term term, PostingList postingList){
@@ -143,7 +181,6 @@ public class HashTable extends Dictionary<Term, PostingList> implements Serializ
 
   @Override
   public void addToPostingList(Term t){
-    //To implement
     HashCell hashTableNode=cells[computeHash(t)];
     int i=0;
 
@@ -160,6 +197,23 @@ public class HashTable extends Dictionary<Term, PostingList> implements Serializ
 
   @Override
   public PostingList getPostingList(Term t){
+    HashCell hashTableNode=cells[computeHash(t)];
+    int i=0;
+
+    if(hashTableNode!=null){
+
+      for(int j=0; j<hashTableNode.chain.size(); j+=1){
+        System.out.println(hashTableNode.chain.get(j).term);
+      }//end-for
+
+      while(i<hashTableNode.chain.size() && !hashTableNode.chain.get(i).getTerm().equals(t)){
+        i+=1;
+      }//end-while
+
+      if(i<hashTableNode.chain.size()){
+        return hashTableNode.chain.get(i).postingList;
+      }//end-if
+    }//end-if
     return null;
   }
 
