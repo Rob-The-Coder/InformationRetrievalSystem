@@ -68,7 +68,7 @@ public class PositionalPostingList extends PostingList implements Serializable {
   /********************************/
   @Serial
   private void writeObject(ObjectOutputStream out) throws IOException{
-    out.writeInt(super.termCollectionFrequency);
+    out.writeInt(super.getTermCollectionFrequency());
     for(Integer docId:docIds){
       super.compressedDocIds.add(docId);
     }//end-for
@@ -78,31 +78,41 @@ public class PositionalPostingList extends PostingList implements Serializable {
 
   @Serial
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-    super.termCollectionFrequency=in.readInt();
+    super.setTermCollectionFrequency(in.readInt());
     super.compressedDocIds = (VariableByteCode) in.readObject();
     this.postings = (ArrayList<Node>)in.readObject();
   }
 
   @Override
   public void addToPostingList(Term t){
-    super.termCollectionFrequency+=1;
-
     Node node=new Node();
+    int pos=insertDocId(t);
 
-    int i;
-    boolean found=(i=searchDocId(t)) != -1;
-
-    //Insert into t.position inside positions and increment frequency
-    if(!found){
+    if(pos<postings.size()){
+      //Node present
+      postings.get(pos).termDocFrequency+=1;
+      postings.get(pos).positions.add(t.getTermPositionInDocument());
+    }else{
       //Node non-present
-      super.docIds.add(t.getDocId());
       node.positions.add(t.getTermPositionInDocument());
       postings.add(node);
-    }else{
-      //Node present
-      postings.get(i).termDocFrequency+=1;
-      postings.get(i).positions.add(t.getTermPositionInDocument());
-    }//end-if
+    }//end-uif
+
+
+//    int i;
+//    boolean found=(i=searchDocId(t)) != -1;
+//
+//    //Insert into t.position inside positions and increment frequency
+//    if(!found){
+//      //Node non-present
+//      super.docIds.add(t.getDocId());
+//      node.positions.add(t.getTermPositionInDocument());
+//      postings.add(node);
+//    }else{
+//      //Node present
+//      postings.get(i).termDocFrequency+=1;
+//      postings.get(i).positions.add(t.getTermPositionInDocument());
+//    }//end-if
 
 //    //Search node with corresponding docId
 //    int i=0;
@@ -119,6 +129,39 @@ public class PositionalPostingList extends PostingList implements Serializable {
 //      postings.get(i).termDocFrequency+=1;
 //    }//end-if
 //    postings.get(i).positions.add(t.getTermPositionInDocument());
+  }
+
+  private void insertPosition(Node node, Term t){
+    int pos=binarySearchDocId(node.positions, t.getTermPositionInDocument());
+
+    if(pos>=node.positions.size() || node.positions.get(pos)!=t.getDocId()){
+      node.positions.add(pos,  t.getDocId());
+    }//end-if
+
+  }
+
+  private int binarySearchDocId(ArrayList<Integer> positions, int target){
+    // Initialize double closed interval [0, n-1]
+    int left=0, right=positions.size()-1;
+
+    while(left<=right){
+      int mid=left+(right-left)/2;
+
+      // Check if x is present at mid
+      if(target==positions.get(mid)){
+        return mid;
+      }//end-if
+
+      // If x greater, ignore left half
+      if(positions.get(mid)<target){
+        left=mid + 1;
+        // If x is smaller, ignore right half
+      }else{
+        right=mid - 1;
+      }//end-if
+    }//end-while
+
+    return left;
   }
   /********************************/
 }

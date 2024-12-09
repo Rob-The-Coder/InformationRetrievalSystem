@@ -3,13 +3,16 @@ package it.unipv.compeng.model.indexer;
 import it.unipv.compeng.model.index.Index;
 import it.unipv.compeng.model.preprocessing.Preprocessor;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Properties;
 public abstract class RunnableStrategy implements IndexingStrategy{
   /********************************/
   //Attributes
   /********************************/
+  private static String PROPERTY_INDEXES_FOLDER="IndexesFolder";
   protected Index index;
   protected Preprocessor preprocessor;
   protected int offset;
@@ -47,7 +50,11 @@ public abstract class RunnableStrategy implements IndexingStrategy{
 
   @Override
   public void storeIndex() throws IOException{
-    FileOutputStream fileOutputStream=new FileOutputStream("/home/roberto/Scaricati/"+ index.getClass().getName() +".txt");
+    Properties properties=new Properties(System.getProperties());
+    properties.load(new FileInputStream("Properties/Properties"));
+    String indexesFolder=properties.getProperty(PROPERTY_INDEXES_FOLDER);
+
+    FileOutputStream fileOutputStream=new FileOutputStream(new StringBuilder(indexesFolder).append("/").append(index.getClass().getName()).append(".txt").toString());
     ObjectOutputStream objectOutputStream=new ObjectOutputStream(fileOutputStream);
     objectOutputStream.writeObject(index);
     objectOutputStream.flush();

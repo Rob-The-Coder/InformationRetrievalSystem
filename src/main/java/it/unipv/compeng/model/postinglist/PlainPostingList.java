@@ -23,7 +23,6 @@ public class PlainPostingList extends PostingList implements Serializable{
   /********************************/
   @Override
   public void addToPostingList(Term t){
-    super.termCollectionFrequency+=1;
 
     //Search if same docID was already added to term posting list
 //    IVBCIterator iterator=super.variableByteCode.iterator();
@@ -35,19 +34,19 @@ public class PlainPostingList extends PostingList implements Serializable{
 //    }//end-while
 
 
-    boolean found=searchDocId(t) != -1;
 
     //Insert into t.position inside positions and increment frequency
-    if(!found){
-      //Node non-present
-      super.docIds.add(t.getDocId());
-//      super.compressedDocIds.add(t.getDocId());
-    }//end-if
+    insertDocId(t);
+//    if(!found){
+//      //Node non-present
+//      super.docIds.add(t.getDocId());
+////      super.compressedDocIds.add(t.getDocId());
+//    }//end-if
   }
 
   @Serial
   private void writeObject(ObjectOutputStream out) throws IOException{
-    out.writeInt(super.termCollectionFrequency);
+    out.writeInt(super.getTermCollectionFrequency());
     for(Integer docId:docIds){
       super.compressedDocIds.add(docId);
     }//end-for
@@ -56,7 +55,7 @@ public class PlainPostingList extends PostingList implements Serializable{
 
   @Serial
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-    super.termCollectionFrequency=in.readInt();
+    super.setTermCollectionFrequency(in.readInt());
     super.compressedDocIds = (VariableByteCode) in.readObject();
   }
 

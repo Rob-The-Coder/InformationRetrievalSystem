@@ -1,4 +1,7 @@
 package it.unipv.compeng.main;
+import atlantafx.base.theme.CupertinoDark;
+import atlantafx.base.theme.PrimerLight;
+import it.unipv.compeng.controller.handler.HomePageHandler;
 import it.unipv.compeng.exceptions.InvalidStrategyException;
 import it.unipv.compeng.model.document.Dataset;
 import it.unipv.compeng.model.document.SampleTextDocument;
@@ -9,7 +12,10 @@ import it.unipv.compeng.model.preprocessing.PlainStringPreprocessor;
 import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
 import it.unipv.compeng.model.preprocessing.Preprocessor;
 import it.unipv.compeng.model.term.StringTerm;
+import it.unipv.compeng.model.utility.IndexManager;
+import it.unipv.compeng.view.HomePageGUI;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -20,9 +26,15 @@ public class Main extends Application{
   public static String SONGS_FOLDER="/home/roberto/Scaricati/Songs/";
   public static String SONGS_FOLDER_COPY="/home/roberto/Scaricati/Songs_Reduced/";
   public static String PROVA="/home/roberto/Scaricati/Prova/";
+  private static Scene scene;
 
   public static void main(String[] args) throws IOException, InvalidStrategyException, ClassNotFoundException, Throwable{
     //Must be done in a more elegant way, as of now is just for testing purposes
+    //IndexManager.getInstance().start();
+
+    HomePageGUI homePageGUI = new HomePageGUI();
+    HomePageHandler handler = new HomePageHandler(homePageGUI);
+    scene=homePageGUI.getScene();
 //    File[] listOfFiles=new File(SONGS_FOLDER).listFiles();
 //    Dataset dataset=new Dataset();
 //    for(int i=0; i<listOfFiles.length; i+=1){
@@ -41,20 +53,19 @@ public class Main extends Application{
 //    Indexer.getInstance().setStrategy(new LMStrategy(new SoundedIndex(dataset.size()), preprocessor));
 //    Indexer.getInstance().index();
 
-    FileInputStream fileInputStream=new FileInputStream("/home/roberto/Scaricati/"+ BTreeIndex.class.getName() +".txt");
-    ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
-    Index i = (Index) objectInputStream.readObject();
-    objectInputStream.close();
-    FileInputStream fileInputStream2=new FileInputStream("/home/roberto/Scaricati/"+ SoundexIndex.class.getName() +".txt");
-    ObjectInputStream objectInputStream2=new ObjectInputStream(fileInputStream2);
-    Index i2 = (Index) objectInputStream2.readObject();
-    objectInputStream2.close();
-
-//    i.traverseDictionary();
-    //TODO: insertion sort for docIDs, since in soundex index there's no guaranteed that docIds are in order
-    System.out.println(i.getPostingList(new StringTerm("zucchini")));
-    System.out.println(Arrays.toString(i.getPostingList(new StringTerm("battleground")).toArray()));
-    System.out.println(Arrays.toString(i2.getPostingList(new StringTerm("zucchini")).toArray()));
+    //TODO:
+//    FileInputStream fileInputStream=new FileInputStream("/home/roberto/Scaricati/"+ BTreeIndex.class.getName() +".txt");
+//    ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
+//    Index i = (Index) objectInputStream.readObject();
+//    objectInputStream.close();
+//    FileInputStream fileInputStream2=new FileInputStream("/home/roberto/Scaricati/"+ SoundexIndex.class.getName() +".txt");
+//    ObjectInputStream objectInputStream2=new ObjectInputStream(fileInputStream2);
+//    Index i2 = (Index) objectInputStream2.readObject();
+//    objectInputStream2.close();
+//
+////    i.traverseDictionary();
+//    System.out.println((i.getPostingList(new StringTerm("zucchini")).getTermCollectionFrequency()));
+//    System.out.println((i2.getPostingList(new StringTerm("zucchini")).getTermCollectionFrequency()));
 
 //    Map<String, Integer> hashMap = new HashMap<>();
 //    while(preprocessor.hasNextToProcess()){
@@ -143,6 +154,9 @@ public class Main extends Application{
 
   @Override
   public void start(Stage stage) throws Exception{
+    Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
 
+    stage.setScene(scene);
+    stage.show();
   }
 }

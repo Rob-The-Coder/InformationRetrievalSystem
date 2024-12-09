@@ -13,6 +13,7 @@ public class BTreeIndex extends Index{
   /********************************/
   //Constructors
   /********************************/
+  public BTreeIndex(){super(new PrefixBTree(2));}
   public BTreeIndex(int t){
     super(new PrefixBTree(t));
   }
