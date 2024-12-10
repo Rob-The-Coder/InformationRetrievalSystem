@@ -54,7 +54,7 @@ public abstract class RunnableStrategy implements IndexingStrategy{
     properties.load(new FileInputStream("Properties/Properties"));
     String indexesFolder=properties.getProperty(PROPERTY_INDEXES_FOLDER);
 
-    FileOutputStream fileOutputStream=new FileOutputStream(new StringBuilder(indexesFolder).append("/").append(index.getClass().getName()).append(".txt").toString());
+    FileOutputStream fileOutputStream=new FileOutputStream(new StringBuilder(indexesFolder).append("/").append(index.getClass().getName()).append(".bin").toString());
     ObjectOutputStream objectOutputStream=new ObjectOutputStream(fileOutputStream);
     objectOutputStream.writeObject(index);
     objectOutputStream.flush();

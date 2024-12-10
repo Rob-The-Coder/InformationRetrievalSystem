@@ -34,10 +34,10 @@ public abstract class PostingList{
   //Methods
   /********************************/
   public int insertDocId(Term t){
-    this.termCollectionFrequency+=1;
     int pos=binarySearchDocId(t.getDocId());
 
     if(pos>=this.docIds.size() || this.docIds.get(pos)!=t.getDocId()){
+      this.termCollectionFrequency+=1;
       this.docIds.add(pos,  t.getDocId());
     }//end-if
 

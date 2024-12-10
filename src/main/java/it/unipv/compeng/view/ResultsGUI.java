@@ -1,39 +1,46 @@
 package it.unipv.compeng.view;
 
+import atlantafx.base.controls.Card;
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.controls.Popover;
 import atlantafx.base.theme.Styles;
+import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
-import org.kordamp.ikonli.javafx.*;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-public class HomePageGUI{
+public class ResultsGUI{
   /********************************/
   //Attributes
   /********************************/
   private static final int clientWidth=(int)Screen.getPrimary().getBounds().getWidth();
   private static final int clientHeight=(int)Screen.getPrimary().getBounds().getHeight();
+  private ImageView logoImageView=null;
   private CustomTextField searchTextField=null;
   private FontIcon clearIcon=null;
   private FontIcon searchIcon=null;
   private Popover searchPopover=null;
+  private Pagination pagination=null;
   private Scene scene=null;
   /********************************/
   //Constructors
   /********************************/
-  public HomePageGUI() throws FileNotFoundException{
+  public ResultsGUI() throws FileNotFoundException{
     initComponents();
   }
   /********************************/
@@ -41,6 +48,9 @@ public class HomePageGUI{
   /********************************/
   public Scene getScene(){
     return scene;
+  }
+  public ImageView getLogoImageView(){
+    return logoImageView;
   }
   public CustomTextField getSearchTextField(){
     return searchTextField;
@@ -54,28 +64,30 @@ public class HomePageGUI{
   public Popover getSearchPopover(){
     return searchPopover;
   }
-  /********************************/
+  public Pagination getPagination(){
+    return pagination;
+  }
+/********************************/
   //Methods
   /********************************/
   private void initComponents() throws FileNotFoundException{
-    //HBox containing the logo
-    Pane whitePane1=new Pane();
-    Pane whitePane2=new Pane();
-    HBox.setHgrow(whitePane1, Priority.ALWAYS);
-    HBox.setHgrow(whitePane2, Priority.ALWAYS);
-    ImageView logoImageView=new ImageView(new Image(new FileInputStream("src/main/resources/Images/Logo/logo_background.png")));
-    logoImageView.setPreserveRatio(true);
-    logoImageView.setFitWidth((double)clientWidth /3);
-    HBox logoHBox=new HBox(whitePane1, logoImageView, whitePane2);
 
-    //HBox containing the search TextField
+    /* Creating TOP NAVBAR where there is the logo and the searchTextField */
+
+    //HBox containing the logo and the search TextField
+    logoImageView=new ImageView(new Image(new FileInputStream("src/main/resources/Images/Logo/logo_background.png")));
+    logoImageView.setPreserveRatio(true);
+    logoImageView.setCursor(Cursor.HAND);
+    logoImageView.setFitWidth((double)clientWidth /6);
+
+    //Text field used for prompting
     searchTextField=new CustomTextField();
     searchTextField.getStyleClass().addAll(Styles.LARGE, Styles.ROUNDED);
 
     searchIcon=new FontIcon(Material2MZ.SEARCH);
     searchIcon.setCursor(Cursor.HAND);
     searchPopover=new Popover(new TextFlow(new Text("Hey you can search lol!")));
-    searchPopover.setArrowLocation(Popover.ArrowLocation.RIGHT_CENTER);
+    searchPopover.setArrowLocation(Popover.ArrowLocation.TOP_LEFT);
     searchPopover.setAnimated(true);
     searchPopover.setHeaderAlwaysVisible(false);
 
@@ -85,32 +97,35 @@ public class HomePageGUI{
     searchTextField.setRight(clearIcon);
     searchTextField.setPromptText("Search...");
     searchTextField.setFocusTraversable(Boolean.FALSE);
-    HBox.setHgrow(searchTextField, Priority.ALWAYS);
 
-    HBox searchHBox=new HBox(searchTextField);
+    //Top NavBar
+    HBox navBarHBox=new HBox(logoImageView, searchTextField);
+    navBarHBox.setAlignment(Pos.CENTER_LEFT);
+    HBox.setMargin(logoImageView, new Insets(11,0,0,0));
+    navBarHBox.setPadding(new Insets(15, 0, 0, 0));
+    navBarHBox.setSpacing(25);
 
-    //VBox containing the logo and the searchTextField
-    VBox homePageVBox=new VBox(0, logoHBox, searchHBox);
-    homePageVBox.setAlignment(Pos.TOP_CENTER);
+    //VBox for adding the separator
+    Separator separator=new Separator(Orientation.HORIZONTAL);
+    VBox navBarSeparated=new VBox(0, navBarHBox, separator);
+
+    /* creating the SCROLLPANE where there will be all the documents retrieved */
+    pagination=new Pagination();
+    pagination.setPageCount(5);
+    pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
+
+    ScrollPane resultsScrollPane=new ScrollPane(pagination);
+    resultsScrollPane.setPadding(new Insets(0, 0, 0, 15));
 
     /* creating GRIDPANE in charge of holding everything on scene */
     GridPane gp=new GridPane();
-    gp.add(homePageVBox, 1, 1);
+    gp.addRow(0, navBarSeparated);
+    gp.addRow(1, resultsScrollPane);
 
-    ColumnConstraints[] columnConstraints=new ColumnConstraints[3];
-    for(int i=0; i<3; i+=1){
-      columnConstraints[i]=new ColumnConstraints();
-      columnConstraints[i].setPercentWidth((double)100 /3);
-    }//end-for
-    gp.getColumnConstraints().addAll(columnConstraints);
+    ColumnConstraints columnConstraints=new ColumnConstraints();
+    columnConstraints.setPercentWidth(100);
 
-    RowConstraints[] rowConstraints=new RowConstraints[3];
-    for(int i=0; i<3; i+=1){
-      rowConstraints[i]=new RowConstraints();
-      rowConstraints[i].setPercentHeight((double)100 /3);
-    }//end-for
-
-    gp.getRowConstraints().addAll(rowConstraints);
+    gp.getColumnConstraints().add(columnConstraints);
 
     scene=new Scene(gp, clientWidth, clientHeight);
   }

@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Properties;
 public class IndexManager extends Thread{
   /********************************/
@@ -54,6 +55,7 @@ public class IndexManager extends Thread{
         System.out.println(datasetFolder);
         ArrayList<File> listOfFiles=new ArrayList<>();
         buildDocumentList(listOfFiles, new File(datasetFolder));
+        Collections.sort(listOfFiles);
         Dataset dataset=new Dataset();
         for(File file:listOfFiles){
           dataset.add(new SampleTextDocument(file));
@@ -62,7 +64,7 @@ public class IndexManager extends Thread{
 //        System.out.println(listOfFiles);
 
         for(String index:indexes){
-          if(!Files.exists(Path.of(new StringBuilder(propertyFolder).append("/").append(index).append(".txt").toString()))){
+          if(!Files.exists(Path.of(new StringBuilder(propertyFolder).append("/").append(index).append(".bin").toString()))){
             Indexer.getInstance().init();
             Indexer.getInstance().setStrategy(new SPIMIStrategy(((Index)(Class.forName(index).getConstructor().newInstance())), new PorterStringPreprocessor(dataset.clone())));
             Indexer.getInstance().index();
