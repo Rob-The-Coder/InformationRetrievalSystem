@@ -20,6 +20,7 @@ import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -27,9 +28,6 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Main extends Application{
-  public static String SONGS_FOLDER="/home/roberto/Scaricati/Songs/";
-  public static String SONGS_FOLDER_COPY="/home/roberto/Scaricati/Songs_Reduced/";
-  public static String PROVA="/home/roberto/Scaricati/Prova/";
   private static Scene scene;
 
   public static void main(String[] args) throws IOException, InvalidStrategyException, ClassNotFoundException, Throwable{
@@ -165,7 +163,10 @@ public class Main extends Application{
   public void start(Stage stage) throws Exception{
     Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
+    stage.setTitle("Home");
     stage.setScene(scene);
+    stage.setMaximized(true);
+    stage.getIcons().add(new Image(new FileInputStream("src/main/resources/Images/Logo/logo_background.png")));
     stage.show();
   }
 }

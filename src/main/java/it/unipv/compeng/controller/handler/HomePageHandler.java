@@ -1,10 +1,16 @@
 package it.unipv.compeng.controller.handler;
 
 import it.unipv.compeng.view.HomePageGUI;
+import it.unipv.compeng.view.ResultsGUI;
 import javafx.event.EventHandler;
+import javafx.geometry.Dimension2D;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.io.FileNotFoundException;
 
 public class HomePageHandler{
   /********************************/
@@ -47,6 +53,22 @@ public class HomePageHandler{
         if(keyEvent.getCode()== KeyCode.ENTER){
 
 
+
+          Stage stage=(Stage)((Node)keyEvent.getSource()).getScene().getWindow();
+
+            ResultsGUI resultsGUI= null;
+            try {
+                resultsGUI = new ResultsGUI();
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+            ResultsHandler resultsHandler=new ResultsHandler(resultsGUI);
+
+          Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
+          stage.setScene(resultsGUI.getScene());
+          stage.setTitle("Results");
+          stage.setWidth(previousDimension.getWidth());
+          stage.setHeight(previousDimension.getHeight());
         }//end-if
       }
     };

@@ -111,8 +111,9 @@ public class ResultsGUI{
 
     /* creating the SCROLLPANE where there will be all the documents retrieved */
     pagination=new Pagination();
-    pagination.setPageCount(5);
+    pagination.setPageCount(4);
     pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
+    pagination.setStyle("-fx-page-information-visible: false;");
 
     ScrollPane resultsScrollPane=new ScrollPane(pagination);
     resultsScrollPane.setPadding(new Insets(0, 0, 0, 15));
