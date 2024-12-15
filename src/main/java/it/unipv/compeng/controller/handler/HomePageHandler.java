@@ -1,7 +1,11 @@
 package it.unipv.compeng.controller.handler;
 
+import it.unipv.compeng.model.utility.ISubcriber;
+import it.unipv.compeng.model.utility.IndexManager;
+import it.unipv.compeng.model.utility.RetrieveManager;
 import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
@@ -12,7 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.FileNotFoundException;
 
-public class HomePageHandler{
+public class HomePageHandler implements ISubcriber{
   /********************************/
   //Attributes
   /********************************/
@@ -51,24 +55,8 @@ public class HomePageHandler{
       public void handle(KeyEvent keyEvent){
         //If ENTER has been pressed then we proceed with the search
         if(keyEvent.getCode()== KeyCode.ENTER){
-
-
-
-          Stage stage=(Stage)((Node)keyEvent.getSource()).getScene().getWindow();
-
-            ResultsGUI resultsGUI= null;
-            try {
-                resultsGUI = new ResultsGUI();
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            ResultsHandler resultsHandler=new ResultsHandler(resultsGUI);
-
-          Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
-          stage.setScene(resultsGUI.getScene());
-          stage.setTitle("Results");
-          stage.setWidth(previousDimension.getWidth());
-          stage.setHeight(previousDimension.getHeight());
+          //In order to search, I need to wait for the indexes to be created/loaded
+          IndexManager.getInstance().subscribe(HomePageHandler.this);
         }//end-if
       }
     };
@@ -77,6 +65,31 @@ public class HomePageHandler{
     this.homePageGUI.getSearchIcon().setOnMouseClicked(searchIconHandler);
     this.homePageGUI.getSearchTextField().setOnKeyPressed(searchHandler);
 
+  }
+
+  @Override
+  public void update(){
+    Platform.runLater(new Runnable(){
+      @Override
+      public void run(){
+        //Once the indexes are loaded I can proceed with the search
+        Stage stage=(Stage)homePageGUI.getScene().getWindow();
+
+        ResultsGUI resultsGUI= null;
+        try {
+          resultsGUI = new ResultsGUI();
+        } catch (FileNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+        ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, RetrieveManager.getInstance().booleanRetrieve(homePageGUI.getSearchTextField().getText()));
+
+        Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
+        stage.setScene(resultsGUI.getScene());
+        stage.setTitle("Results");
+        stage.setWidth(previousDimension.getWidth());
+        stage.setHeight(previousDimension.getHeight());
+      }
+    });
   }
   /********************************/
 }

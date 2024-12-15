@@ -3,12 +3,13 @@ package it.unipv.compeng.model.index;
 import it.unipv.compeng.model.dictionary.PrefixBTree;
 import it.unipv.compeng.model.postinglist.PlainPostingList;
 import it.unipv.compeng.model.postinglist.PostingList;
+import it.unipv.compeng.model.preprocessing.PlainStringPreprocessor;
 import it.unipv.compeng.model.term.StringTerm;
 import it.unipv.compeng.model.term.Term;
 
 public class SoundexIndex extends Index{
   public SoundexIndex(){
-    super(new PrefixBTree(2));
+    super(new PrefixBTree(2), new PlainStringPreprocessor());
   }
 
   @Override

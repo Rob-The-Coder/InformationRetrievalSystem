@@ -5,7 +5,7 @@ public class SampleTextDocument extends Document{
   /********************************/
   //Attributes
   /********************************/
-  File sampleText;
+  private final File sampleText;
   /********************************/
   //Constructors
   /********************************/
@@ -59,6 +59,5 @@ public class SampleTextDocument extends Document{
   public Document clone(){
     return new SampleTextDocument(sampleText.getPath());
   }
-
   /********************************/
 }

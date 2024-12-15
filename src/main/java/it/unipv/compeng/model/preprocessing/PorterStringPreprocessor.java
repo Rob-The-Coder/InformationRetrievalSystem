@@ -15,6 +15,8 @@ public class PorterStringPreprocessor extends Preprocessor{
   public PorterStringPreprocessor(IDatasetIterable dataset){
     super(dataset);
   }
+
+  public PorterStringPreprocessor(){}
   /********************************/
   //Getter/Setter
   /********************************/

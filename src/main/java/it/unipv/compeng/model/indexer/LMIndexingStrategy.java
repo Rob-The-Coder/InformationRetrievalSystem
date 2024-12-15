@@ -2,10 +2,7 @@ package it.unipv.compeng.model.indexer;
 
 import it.unipv.compeng.model.index.Index;
 import it.unipv.compeng.model.preprocessing.Preprocessor;
-import it.unipv.compeng.model.term.Term;
-
-import java.io.IOException;
-public class LMStrategy extends RunnableStrategy{
+public class LMIndexingStrategy extends RunnableIndexingStrategy{
   /********************************/
   //Attributes
   /********************************/
@@ -13,8 +10,8 @@ public class LMStrategy extends RunnableStrategy{
   /********************************/
   //Constructors
   /********************************/
-  public LMStrategy(Index index, Preprocessor preprocessor){
-    super(index, preprocessor);
+  public LMIndexingStrategy(Index index){
+    super(index);
   }
   /********************************/
   //Getter/Setter

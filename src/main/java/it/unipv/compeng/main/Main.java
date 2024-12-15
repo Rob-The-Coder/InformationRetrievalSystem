@@ -1,46 +1,32 @@
 package it.unipv.compeng.main;
-import atlantafx.base.theme.CupertinoDark;
-import atlantafx.base.theme.Dracula;
 import atlantafx.base.theme.PrimerDark;
-import atlantafx.base.theme.PrimerLight;
 import it.unipv.compeng.controller.handler.HomePageHandler;
 import it.unipv.compeng.controller.handler.ResultsHandler;
 import it.unipv.compeng.exceptions.InvalidStrategyException;
-import it.unipv.compeng.model.document.Dataset;
-import it.unipv.compeng.model.document.SampleTextDocument;
-import it.unipv.compeng.model.index.*;
-import it.unipv.compeng.model.indexer.Indexer;
-import it.unipv.compeng.model.indexer.SPIMIStrategy;
-import it.unipv.compeng.model.preprocessing.PlainStringPreprocessor;
-import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
-import it.unipv.compeng.model.preprocessing.Preprocessor;
-import it.unipv.compeng.model.term.StringTerm;
 import it.unipv.compeng.model.utility.IndexManager;
 import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.util.Arrays;
 
 public class Main extends Application{
   private static Scene scene;
 
   public static void main(String[] args) throws IOException, InvalidStrategyException, ClassNotFoundException, Throwable{
     //Must be done in a more elegant way, as of now is just for testing purposes
-//    IndexManager.getInstance().start();
+    IndexManager.getInstance();
 
-//    HomePageGUI homePageGUI = new HomePageGUI();
-//    HomePageHandler handler = new HomePageHandler(homePageGUI);
-//    scene=homePageGUI.getScene();
+    HomePageGUI homePageGUI = new HomePageGUI();
+    HomePageHandler handler = new HomePageHandler(homePageGUI);
+    scene=homePageGUI.getScene();
 
-    ResultsGUI resultsGUI = new ResultsGUI();
-    ResultsHandler resultsHandler=new ResultsHandler(resultsGUI);
-    scene=resultsGUI.getScene();
+//    ResultsGUI resultsGUI = new ResultsGUI();
+//    ResultsHandler resultsHandler=new ResultsHandler(resultsGUI);
+//    scene=resultsGUI.getScene();
 
 //    File[] listOfFiles=new File(SONGS_FOLDER).listFiles();
 //    Dataset dataset=new Dataset();

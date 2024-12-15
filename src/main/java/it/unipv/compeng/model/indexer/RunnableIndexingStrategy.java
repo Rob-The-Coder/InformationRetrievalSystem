@@ -8,27 +8,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
-public abstract class RunnableStrategy implements IndexingStrategy{
+public abstract class RunnableIndexingStrategy implements IndexingStrategy{
   /********************************/
   //Attributes
   /********************************/
-  private static String PROPERTY_INDEXES_FOLDER="IndexesFolder";
+  private final static String PROPERTY_INDEXES_FOLDER="IndexesFolder";
   protected Index index;
-  protected Preprocessor preprocessor;
-  protected int offset;
   /********************************/
   //Constructors
   /********************************/
-  public RunnableStrategy(Index index, Preprocessor preprocessor) {
+  public RunnableIndexingStrategy(Index index) {
     this.index = index;
-    this.preprocessor = preprocessor;
-    this.offset=0;
-  }
-
-  public RunnableStrategy(Index index, Preprocessor preprocessor, int offset) {
-    this.index = index;
-    this.preprocessor = preprocessor;
-    this.offset=offset;
   }
   /********************************/
   //Getter/Setter

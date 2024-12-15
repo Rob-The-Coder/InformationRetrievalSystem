@@ -6,7 +6,7 @@ import it.unipv.compeng.model.term.Term;
 
 import java.io.*;
 
-public class SPIMIStrategy extends RunnableStrategy{
+public class SPIMIIndexingStrategy extends RunnableIndexingStrategy{
   /********************************/
   //Attributes
   /********************************/
@@ -14,8 +14,8 @@ public class SPIMIStrategy extends RunnableStrategy{
   /********************************/
   //Constructors
   /********************************/
-  public SPIMIStrategy(Index index, Preprocessor preprocessor){
-    super(index, preprocessor);
+  public SPIMIIndexingStrategy(Index index){
+    super(index);
   }
   /********************************/
   //Getter/Setter
@@ -32,9 +32,9 @@ public class SPIMIStrategy extends RunnableStrategy{
     Term[] terms=null;
 
     int count=0;
-    while(preprocessor.hasNextToProcess()){
+    while(super.index.getPreprocessor().hasNextToProcess()){
       System.out.println("Indexing document: "+ count);
-      terms=preprocessor.processNext();
+      terms=super.index.getPreprocessor().processNext();
 
       for(Term term : terms){
         index.addToDictionary(term);
@@ -42,13 +42,7 @@ public class SPIMIStrategy extends RunnableStrategy{
       count+=1;
     }//end-while
 
-    index.traverseDictionary();
     super.storeIndex();
-    //Some sort of sorting and then write output to file
-//    Writer writer = new FileWriter("/home/roberto/Scaricati/index.json");
-//    Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//    gson.toJson(index, writer);
-    //index.traverseDictionary();
   }
   /********************************/
 }

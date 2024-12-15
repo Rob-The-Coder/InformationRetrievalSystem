@@ -1,40 +1,40 @@
 package it.unipv.compeng.controller.handler;
 
-import atlantafx.base.controls.Card;
-import atlantafx.base.theme.Styles;
-import atlantafx.base.util.Animations;
-import atlantafx.base.util.BBCodeParser;
+import it.unipv.compeng.model.document.Document;
+import it.unipv.compeng.model.utility.ISubcriber;
+import it.unipv.compeng.model.utility.IndexManager;
+import it.unipv.compeng.model.utility.RetrieveManager;
 import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
-import javafx.animation.Timeline;
+import it.unipv.compeng.view.presets.documentCard;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 
 
-public class ResultsHandler{
+public class ResultsHandler implements ISubcriber{
   /********************************/
   //Attributes
   /********************************/
-  private static final int clientHeight=(int)Screen.getPrimary().getBounds().getHeight();
+  private static final int DOCS_PER_PAGE=10;
   private final ResultsGUI resultsGUI;
+  private final ArrayList<Document> docResults;
   /********************************/
   //Constructors
   /********************************/
-  public ResultsHandler(ResultsGUI resultsGUI){
+  public ResultsHandler(ResultsGUI resultsGUI, ArrayList<Document> docResults){
     this.resultsGUI=resultsGUI;
+    this.docResults=docResults;
     initComponents();
   }
   /********************************/
@@ -85,18 +85,13 @@ public class ResultsHandler{
       public Node call(Integer integer){
         VBox resultsVBox=new VBox(20);
 
-        for(int i=0; i<4; i+=1){
-          Card card=new Card();
-          card.setHeader(BBCodeParser.createFormattedText("[heading=1][b]TITLE_OF_THE_SONG.TXT[/b][/heading]"));
-          card.setSubHeader(new Text("Description"));
-          card.setBody(new Text("BODY"));
-          card.setFooter(new Text("FOOTER"));
-          card.getStyleClass().add(Styles.INTERACTIVE);
-          card.setCursor(Cursor.HAND);
-          card.setMinHeight((double)clientHeight /6);
+        int i=DOCS_PER_PAGE*integer;
+        int fin=i+DOCS_PER_PAGE;
+        while(i<fin){
+          resultsVBox.getChildren().add(new documentCard());
 
-          resultsVBox.getChildren().add(card);
-        }//end-for
+          i+=1;
+        }//end-while
 
         return resultsVBox;
       }
@@ -107,8 +102,7 @@ public class ResultsHandler{
       public void handle(KeyEvent keyEvent){
         //If ENTER has been pressed then we proceed with the search
         if(keyEvent.getCode()== KeyCode.ENTER){
-
-
+          IndexManager.getInstance().subscribe(ResultsHandler.this);
         }//end-if
       }
     };
@@ -117,7 +111,33 @@ public class ResultsHandler{
     this.resultsGUI.getClearIcon().setOnMouseClicked(clearIconHandler);
     this.resultsGUI.getSearchIcon().setOnMouseClicked(searchIconHandler);
     this.resultsGUI.getPagination().setPageFactory(callback);
+    this.resultsGUI.getPagination().setPageCount(docResults.size()/DOCS_PER_PAGE);
     this.resultsGUI.getSearchTextField().setOnKeyPressed(searchHandler);
+  }
+
+  @Override
+  public void update(){
+    Platform.runLater(new Runnable(){
+      @Override
+      public void run(){
+        //Once the indexes are loaded I can proceed with the search
+        Stage stage=(Stage)resultsGUI.getScene().getWindow();
+
+        ResultsGUI resultsGUI= null;
+        try {
+          resultsGUI = new ResultsGUI();
+        } catch (FileNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+        ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
+
+        Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
+        stage.setScene(resultsGUI.getScene());
+        stage.setTitle("Results");
+        stage.setWidth(previousDimension.getWidth());
+        stage.setHeight(previousDimension.getHeight());
+      }
+    });
   }
   /********************************/
 }

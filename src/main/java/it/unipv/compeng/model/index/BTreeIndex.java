@@ -3,6 +3,7 @@ package it.unipv.compeng.model.index;
 import it.unipv.compeng.model.dictionary.PrefixBTree;
 import it.unipv.compeng.model.postinglist.PlainPostingList;
 import it.unipv.compeng.model.postinglist.PostingList;
+import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
 import it.unipv.compeng.model.term.Term;
 
 public class BTreeIndex extends Index{
@@ -13,9 +14,11 @@ public class BTreeIndex extends Index{
   /********************************/
   //Constructors
   /********************************/
-  public BTreeIndex(){super(new PrefixBTree(2));}
+  public BTreeIndex(){
+    super(new PrefixBTree(2), new PorterStringPreprocessor());
+  }
   public BTreeIndex(int t){
-    super(new PrefixBTree(t));
+    super(new PrefixBTree(t), new PorterStringPreprocessor());
   }
   /********************************/
   //Getter/Setter

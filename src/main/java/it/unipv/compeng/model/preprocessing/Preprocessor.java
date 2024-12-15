@@ -6,23 +6,30 @@ import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.*;
 
-public abstract class Preprocessor{
+public abstract class Preprocessor implements Serializable{
   /********************************/
   //Attributes
   /********************************/
-  IDatasetIterator datasetIterator;
+  private transient IDatasetIterator datasetIterator;
   /********************************/
   //Constructors
   /********************************/
   public Preprocessor(IDatasetIterable dataset){
     this.datasetIterator = dataset.iterator();
   }
+
+  public Preprocessor(){}
   /********************************/
   //Getter/Setter
   /********************************/
+  public void setDataset(IDatasetIterable dataset){
+    this.datasetIterator = dataset.iterator();
+  }
+
   private int getPosition(){
     return datasetIterator.getPosition();
   }
@@ -31,6 +38,10 @@ public abstract class Preprocessor{
   /********************************/
   public final boolean hasNextToProcess(){
     return datasetIterator.hasNext();
+  }
+
+  public final Term process(String s){
+    return stem(caseFold(normalize(s)));
   }
 
   public final Term[] processNext() throws IOException{

@@ -118,10 +118,18 @@ public class ResultsGUI{
     ScrollPane resultsScrollPane=new ScrollPane(pagination);
     resultsScrollPane.setPadding(new Insets(0, 0, 0, 15));
 
+    Separator verticalSeparator=new Separator(Orientation.VERTICAL);
+
+    VBox documentClickedVBox=new VBox();
+
+    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedVBox);
+//    HBox.setHgrow(resultsScrollPane, Priority.ALWAYS);
+//    HBox.setHgrow(documentClickedVBox, Priority.ALWAYS);
+
     /* creating GRIDPANE in charge of holding everything on scene */
     GridPane gp=new GridPane();
     gp.addRow(0, navBarSeparated);
-    gp.addRow(1, resultsScrollPane);
+    gp.addRow(1, resultsHBox);
 
     ColumnConstraints columnConstraints=new ColumnConstraints();
     columnConstraints.setPercentWidth(100);

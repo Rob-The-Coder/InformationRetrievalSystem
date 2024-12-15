@@ -13,7 +13,7 @@ public class StringTerm extends Term{
 
   @Override
   public int compareTo(Term term){
-    return super.termEquivalentString.compareTo(((StringTerm) term).toString());
+    return super.termEquivalentString.compareTo(((StringTerm)term).toString());
   }
 
   @Override
