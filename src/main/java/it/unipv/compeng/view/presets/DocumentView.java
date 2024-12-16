@@ -3,13 +3,16 @@ package it.unipv.compeng.view.presets;
 import atlantafx.base.controls.Card;
 import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
-import javafx.scene.Node;
+import atlantafx.base.util.BBCodeParser;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
-public class documentCard extends Card{
+
+public class DocumentView extends Card {
   /********************************/
   //Attributes
   /********************************/
@@ -17,29 +20,24 @@ public class documentCard extends Card{
   /********************************/
   //Constructors
   /********************************/
-  public documentCard(){
+  public DocumentView(){
     super();
     initComponents();
   }
   /********************************/
   //Getter/Setter
   /********************************/
+  public void setText(String text){
+//    TextFlow textFlow=BBCodeParser.createFormattedText(text);
 
+    Text t=new Text(text);
+    t.setFill(Color.WHITE);
+    this.setBody(t);
+  }
   /********************************/
   //Methods
   /********************************/
   private void initComponents(){
-    Tile tile = new Tile();
-    FontIcon icon=new FontIcon(Material2AL.ARTICLE);
-    icon.setIconSize(12);
-    tile.setGraphic(icon);
-    tile.setTitle("TITLE_OF_THE_SONG.TXT");
-    tile.setDescription("DESCRIPTION_OF_THE_SONG");
-    Button openButton = new Button(null, new FontIcon(Material2MZ.OPEN_IN_NEW));
-    openButton.getStyleClass().addAll(Styles.BUTTON_CIRCLE, Styles.FLAT);
-    tile.setAction(openButton);
-
-    this.setHeader(tile);
     this.getStyleClass().addAll(Styles.INTERACTIVE);
   }
   /********************************/

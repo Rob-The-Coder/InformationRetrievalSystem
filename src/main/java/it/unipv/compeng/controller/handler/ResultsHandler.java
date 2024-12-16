@@ -1,13 +1,16 @@
 package it.unipv.compeng.controller.handler;
 
+import it.unipv.compeng.controller.handler.presets.DocumentCardHandler;
 import it.unipv.compeng.model.document.Document;
 import it.unipv.compeng.model.utility.ISubcriber;
 import it.unipv.compeng.model.utility.IndexManager;
 import it.unipv.compeng.model.utility.RetrieveManager;
 import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
-import it.unipv.compeng.view.presets.documentCard;
+import it.unipv.compeng.view.presets.DocumentCard;
+import it.unipv.compeng.view.presets.DocumentView;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
@@ -19,6 +22,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -87,8 +91,27 @@ public class ResultsHandler implements ISubcriber{
 
         int i=DOCS_PER_PAGE*integer;
         int fin=i+DOCS_PER_PAGE;
-        while(i<fin){
-          resultsVBox.getChildren().add(new documentCard());
+        while(i<fin && i<docResults.size()){
+          DocumentCard documentCard=new DocumentCard();
+          DocumentCardHandler documentCardHandler=new DocumentCardHandler(documentCard, docResults.get(i));
+          resultsVBox.getChildren().add(documentCard);
+
+          int finalI = i;
+
+          EventHandler<ActionEvent> openButtonClickHandler=new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+              DocumentView documentView=new DocumentView();
+              try {
+                documentView.setText(docResults.get(finalI).read());
+                System.out.println(docResults.get(finalI).read());
+              } catch (IOException e) {
+                throw new RuntimeException(e);
+              }
+              resultsGUI.setDocumentView(documentView);
+            }
+          };
+          documentCard.getOpenButton().setOnAction(openButtonClickHandler);
 
           i+=1;
         }//end-while
@@ -111,7 +134,7 @@ public class ResultsHandler implements ISubcriber{
     this.resultsGUI.getClearIcon().setOnMouseClicked(clearIconHandler);
     this.resultsGUI.getSearchIcon().setOnMouseClicked(searchIconHandler);
     this.resultsGUI.getPagination().setPageFactory(callback);
-    this.resultsGUI.getPagination().setPageCount(docResults.size()/DOCS_PER_PAGE);
+    this.resultsGUI.getPagination().setPageCount((int) Math.ceil((double) docResults.size() /DOCS_PER_PAGE));
     this.resultsGUI.getSearchTextField().setOnKeyPressed(searchHandler);
   }
 
@@ -129,6 +152,7 @@ public class ResultsHandler implements ISubcriber{
         } catch (FileNotFoundException e) {
           throw new RuntimeException(e);
         }
+        System.out.println(resultsGUI.getSearchTextField().getText());
         ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
 
         Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());

@@ -9,11 +9,11 @@ public class SampleTextDocument extends Document{
   /********************************/
   //Constructors
   /********************************/
-  public SampleTextDocument(String path){
-    this(new File(path));
+  public SampleTextDocument(String path, int docId){
+    this(new File(path), docId);
   }
 
-  public SampleTextDocument(File textDocument){
+  public SampleTextDocument(File textDocument, int docId){
     if (textDocument == null || !textDocument.exists() || !textDocument.isFile()){
       throw new NullPointerException("File is invalid");
     }//end-if
@@ -21,7 +21,9 @@ public class SampleTextDocument extends Document{
     int dotIndex=textDocument.getName().lastIndexOf(".");
     if(dotIndex>=0){
       if(textDocument.getName().substring(dotIndex+1).equals("txt")){
-        sampleText=textDocument;
+        this.sampleText=textDocument;
+        super.title=textDocument.getName();
+        super.docId=docId;
       }else{
         throw new IllegalArgumentException("File is not a text file");
       }//end-if
@@ -57,7 +59,7 @@ public class SampleTextDocument extends Document{
 
   @Override
   public Document clone(){
-    return new SampleTextDocument(sampleText.getPath());
+    return new SampleTextDocument(sampleText.getPath(), this.getDocId());
   }
   /********************************/
 }

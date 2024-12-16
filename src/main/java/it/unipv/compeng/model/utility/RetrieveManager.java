@@ -1,7 +1,6 @@
 package it.unipv.compeng.model.utility;
 
 import it.unipv.compeng.model.document.Document;
-import it.unipv.compeng.model.term.DummyTerm;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +43,7 @@ public class RetrieveManager{
     if(splittedString.length>=1){
       System.out.println("Computing initial or");
       or(IndexManager.getInstance().searchIndexes(splittedString[0]));
+      System.out.println("Retrieved "+this.docs.size()+" documents after initial or");
       StringBuilder sb=new StringBuilder(signs);
       for(int i=0; i<sb.length(); i+=1){
         if(sb.charAt(i)==AND_SIGN){
@@ -65,7 +65,8 @@ public class RetrieveManager{
 //      }
 //    }//end-for-each
 //
-    return docs;
+    System.out.println("returning: "+this.docs.size()+" documents.");
+    return this.docs;
   }
 
   private void and(ArrayList<Document> docs){

@@ -36,6 +36,7 @@ public class ResultsGUI{
   private FontIcon searchIcon=null;
   private Popover searchPopover=null;
   private Pagination pagination=null;
+  private ScrollPane documentClickedScrollPane=null;
   private Scene scene=null;
   /********************************/
   //Constructors
@@ -66,6 +67,11 @@ public class ResultsGUI{
   }
   public Pagination getPagination(){
     return pagination;
+  }
+  public void setDocumentView(Card documentView){
+    documentClickedScrollPane.setContent(documentView);
+    documentClickedScrollPane.setFitToHeight(true);
+    documentClickedScrollPane.setFitToWidth(true);
   }
 /********************************/
   //Methods
@@ -120,11 +126,11 @@ public class ResultsGUI{
 
     Separator verticalSeparator=new Separator(Orientation.VERTICAL);
 
-    VBox documentClickedVBox=new VBox();
+    documentClickedScrollPane=new ScrollPane();
 
-    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedVBox);
+    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedScrollPane);
 //    HBox.setHgrow(resultsScrollPane, Priority.ALWAYS);
-//    HBox.setHgrow(documentClickedVBox, Priority.ALWAYS);
+    HBox.setHgrow(documentClickedScrollPane, Priority.ALWAYS);
 
     /* creating GRIDPANE in charge of holding everything on scene */
     GridPane gp=new GridPane();

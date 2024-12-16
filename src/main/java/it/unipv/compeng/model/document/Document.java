@@ -6,7 +6,8 @@ public abstract class Document{
   /********************************/
   //Attributes
   /********************************/
-  private int docId;
+  protected String title;
+  protected int docId;
   /********************************/
   //Constructors
   /********************************/
@@ -14,11 +15,22 @@ public abstract class Document{
   /********************************/
   //Getter/Setter
   /********************************/
+  public int getDocId(){
+    return docId;
+  }
 
+  public String getTitle(){
+    return title;
+  }
   /********************************/
   //Methods
   /********************************/
   public abstract String read() throws IOException;
   public abstract Document clone();
+
+  @Override
+  public boolean equals(Object obj){
+    return this.getDocId()==((Document)obj).getDocId();
+  }
   /********************************/
 }

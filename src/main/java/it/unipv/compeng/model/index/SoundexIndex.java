@@ -22,6 +22,14 @@ public class SoundexIndex extends Index{
     return null;
   }
 
+  @Override
+  public PostingList getPostingList(String s){
+    Term equivalentTerm=getCorrectTerm(s);
+    classifyTerm(equivalentTerm);
+    System.out.println(equivalentTerm);
+    return getPostingList(equivalentTerm);
+  }
+
 //  @Override
 //  public void addToPostingList(Term t) {
 //    classifyTerm(t);

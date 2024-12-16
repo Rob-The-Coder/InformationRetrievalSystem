@@ -6,7 +6,7 @@ import it.unipv.compeng.model.document.SampleTextDocument;
 import it.unipv.compeng.model.index.Index;
 import it.unipv.compeng.model.indexer.Indexer;
 import it.unipv.compeng.model.indexer.SPIMIIndexingStrategy;
-import it.unipv.compeng.model.term.Term;
+import it.unipv.compeng.model.postinglist.PostingList;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +25,7 @@ public class IndexManager extends Thread{
   private final static String PROPERTY_DATASETS_FOLDER = "DatasetsFolder";
   private final static String PROPERTY_INDEXES_FOLDER = "IndexesFolder";
   private final static String PROPERTY_INDEXES = "IndexesClassName";
-  private final ArrayList<ISubcriber> subcribers;
+  private final ArrayList<ISubcriber> subscribers;
 
   private ArrayList<File> listOfFiles;
   /********************************/
@@ -34,7 +34,7 @@ public class IndexManager extends Thread{
   private IndexManager(){
     this.indexArrayList = new ArrayList<>();
     this.listOfFiles = new ArrayList<>();
-    this.subcribers = new ArrayList<>();
+    this.subscribers = new ArrayList<>();
     this.start();
   }
   /********************************/
@@ -65,15 +65,16 @@ public class IndexManager extends Thread{
         buildDocumentList(listOfFiles, new File(datasetFolder));
         Collections.sort(listOfFiles);
         Dataset dataset=new Dataset();
-        for(File file:listOfFiles){
-          dataset.add(new SampleTextDocument(file));
+        for(int i=0; i<listOfFiles.size(); i+=1){
+          dataset.add(new SampleTextDocument(listOfFiles.get(i), i));
         }//end-for
-
 //        System.out.println(listOfFiles);
 
         Indexer.getInstance().init();
         for(String index:indexes){
-          if(!Files.exists(Path.of(new StringBuilder(indexesFolder).append("/").append(index).append(".bin").toString()))){
+
+          if(!Files.exists(Path.of(new StringBuilder(indexesFolder).append(File.separator).append(index).append(".bin").toString()))){
+            System.out.println(index + "  needs indexing...");
 
             //Using tmpIndex as a Facade to set everything up for indexing
             Index tmpIndex=(Index)(Class.forName(index).getConstructor().newInstance());
@@ -91,7 +92,7 @@ public class IndexManager extends Thread{
 
         for(String index:indexes){
           //Deserializing index from memory and adding it to indexArrayList
-          FileInputStream fileInputStream=new FileInputStream(new StringBuilder(indexesFolder).append("/").append(index).append(".bin").toString());
+          FileInputStream fileInputStream=new FileInputStream(new StringBuilder(indexesFolder).append(File.separator).append(index).append(".bin").toString());
           ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
           Index i = (Index) objectInputStream.readObject();
           objectInputStream.close();
@@ -113,10 +114,13 @@ public class IndexManager extends Thread{
     ArrayList<Document> documents=new ArrayList<>();
 
     for(Index index:indexArrayList){
-      int[] tmpDocIds=index.getPostingList(s).toArray();
-      for(int docId:tmpDocIds){
-        documents.add(new SampleTextDocument(listOfFiles.get(docId)));
-      }//end-for-each
+      PostingList pl=index.getPostingList(s);
+      if(pl!=null){
+        int[] tmpDocIds=pl.toArray();
+        for(int docId:tmpDocIds){
+          documents.add(new SampleTextDocument(listOfFiles.get(docId), docId));
+        }//end-for-each
+      }//end-if
     }//end-for-each
 
     return documents;
@@ -137,15 +141,15 @@ public class IndexManager extends Thread{
     if(!this.indexArrayList.isEmpty()){
       subscriber.update();
     }else{
-      this.subcribers.add(subscriber);
+      this.subscribers.add(subscriber);
     }//end-if
   }
 
   public void notifySubscribers(){
-    for(ISubcriber subscriber:subcribers){
+    for(ISubcriber subscriber: subscribers){
       subscriber.update();
     }//end-for-each
-    subcribers.clear();
+    subscribers.clear();
   }
   /********************************/
 }

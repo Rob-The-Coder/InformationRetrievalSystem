@@ -33,6 +33,12 @@ public class BTreeIndex extends Index{
   }
 
   @Override
+  public PostingList getPostingList(String s) {
+    System.out.println(getCorrectTerm(s));
+    return getPostingList(getCorrectTerm(s));
+  }
+
+  @Override
   public void addToDictionary(Term t){
     super.dictionary.insert(t, new PlainPostingList());
   }

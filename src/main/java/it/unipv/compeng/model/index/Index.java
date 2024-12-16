@@ -52,10 +52,7 @@ public abstract class Index implements Serializable{
   /********************************/
   public abstract PostingList getPostingList(Term t);
 
-  public PostingList getPostingList(String s){
-    System.out.println(getCorrectTerm(s));
-    return getPostingList(getCorrectTerm(s));
-  }
+  public abstract PostingList getPostingList(String s);
 
   public abstract void addToDictionary(Term t);
 
