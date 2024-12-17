@@ -13,6 +13,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -32,12 +33,14 @@ public class ResultsHandler implements ISubcriber{
   /********************************/
   private static final int DOCS_PER_PAGE=10;
   private final ResultsGUI resultsGUI;
+  private final String computedQuery;
   private final ArrayList<Document> docResults;
   /********************************/
   //Constructors
   /********************************/
-  public ResultsHandler(ResultsGUI resultsGUI, ArrayList<Document> docResults){
+  public ResultsHandler(ResultsGUI resultsGUI, String computedQuery, ArrayList<Document> docResults){
     this.resultsGUI=resultsGUI;
+    this.computedQuery=computedQuery;
     this.docResults=docResults;
     initComponents();
   }
@@ -88,6 +91,7 @@ public class ResultsHandler implements ISubcriber{
       @Override
       public Node call(Integer integer){
         VBox resultsVBox=new VBox(20);
+        resultsVBox.setPadding(new Insets(20, 20, 0, 0));
 
         int i=DOCS_PER_PAGE*integer;
         int fin=i+DOCS_PER_PAGE;
@@ -96,27 +100,30 @@ public class ResultsHandler implements ISubcriber{
           DocumentCardHandler documentCardHandler=new DocumentCardHandler(documentCard, docResults.get(i));
           resultsVBox.getChildren().add(documentCard);
 
-          int finalI = i;
-
-          EventHandler<ActionEvent> openButtonClickHandler=new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-              DocumentView documentView=new DocumentView();
-              try {
-                documentView.setText(docResults.get(finalI).read());
-                System.out.println(docResults.get(finalI).read());
-              } catch (IOException e) {
-                throw new RuntimeException(e);
-              }
-              resultsGUI.setDocumentView(documentView);
-            }
-          };
+          EventHandler<ActionEvent> openButtonClickHandler=getActionEventEventHandler(i);
           documentCard.getOpenButton().setOnAction(openButtonClickHandler);
 
           i+=1;
         }//end-while
 
         return resultsVBox;
+      }
+
+      private EventHandler<ActionEvent> getActionEventEventHandler(int i){
+
+        return new EventHandler<ActionEvent>(){
+          @Override
+          public void handle(ActionEvent actionEvent) {
+            DocumentView documentView=new DocumentView();
+            try {
+              documentView.setText(docResults.get(i).read());
+              System.out.println(docResults.get(i).read());
+            } catch (IOException e) {
+              throw new RuntimeException(e);
+            }
+            resultsGUI.setDocumentView(documentView);
+          }
+        };
       }
     };
 
@@ -146,17 +153,17 @@ public class ResultsHandler implements ISubcriber{
         //Once the indexes are loaded I can proceed with the search
         Stage stage=(Stage)resultsGUI.getScene().getWindow();
 
-        ResultsGUI resultsGUI= null;
+        ResultsGUI results= null;
         try {
-          resultsGUI = new ResultsGUI();
+          results = new ResultsGUI();
         } catch (FileNotFoundException e) {
           throw new RuntimeException(e);
         }
         System.out.println(resultsGUI.getSearchTextField().getText());
-        ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
+        ResultsHandler resultsHandler=new ResultsHandler(results, results.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
 
         Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
-        stage.setScene(resultsGUI.getScene());
+        stage.setScene(results.getScene());
         stage.setTitle("Results");
         stage.setWidth(previousDimension.getWidth());
         stage.setHeight(previousDimension.getHeight());

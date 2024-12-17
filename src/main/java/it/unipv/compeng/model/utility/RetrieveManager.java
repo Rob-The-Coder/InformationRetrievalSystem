@@ -42,29 +42,23 @@ public class RetrieveManager{
     //Computing
     if(splittedString.length>=1){
       System.out.println("Computing initial or");
-      or(IndexManager.getInstance().searchIndexes(splittedString[0]));
-      System.out.println("Retrieved "+this.docs.size()+" documents after initial or");
+//      or(IndexManager.getInstance().searchIndexes(splittedString[0]));
+      this.docs=IndexManager.getInstance().searchIndexes(splittedString[0]);
+      System.out.println(splittedString[0] + " retrieved "+this.docs.size()+" documents");
       StringBuilder sb=new StringBuilder(signs);
       for(int i=0; i<sb.length(); i+=1){
         if(sb.charAt(i)==AND_SIGN){
           System.out.println("Computing and");
           and(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
+          System.out.println("Retrieved "+this.docs.size()+" documents after computing and");
         }else if(sb.charAt(i)==OR_SIGN){
           System.out.println("Computing or");
           or(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
+          System.out.println("Retrieved "+this.docs.size()+" documents after computing or");
         }//end-if
       }//end-for
     }//end-if
 
-//    System.out.println(docs);
-//    for(Document d:docs){
-//      try{
-//        System.out.println(d.read());
-//      }catch(IOException e){
-//        throw new RuntimeException(e);
-//      }
-//    }//end-for-each
-//
     System.out.println("returning: "+this.docs.size()+" documents.");
     return this.docs;
   }

@@ -70,8 +70,6 @@ public class ResultsGUI{
   }
   public void setDocumentView(Card documentView){
     documentClickedScrollPane.setContent(documentView);
-    documentClickedScrollPane.setFitToHeight(true);
-    documentClickedScrollPane.setFitToWidth(true);
   }
 /********************************/
   //Methods
@@ -110,37 +108,49 @@ public class ResultsGUI{
     HBox.setMargin(logoImageView, new Insets(11,0,0,0));
     navBarHBox.setPadding(new Insets(15, 0, 0, 0));
     navBarHBox.setSpacing(25);
+    HBox.setHgrow(searchTextField, Priority.ALWAYS);
 
     //VBox for adding the separator
-    Separator separator=new Separator(Orientation.HORIZONTAL);
-    VBox navBarSeparated=new VBox(0, navBarHBox, separator);
+    Separator separator1=new Separator(Orientation.HORIZONTAL);
+    separator1.setPadding(Insets.EMPTY);
+    Separator separator2=new Separator(Orientation.HORIZONTAL);
+    separator2.setPadding(Insets.EMPTY);
 
     /* creating the SCROLLPANE where there will be all the documents retrieved */
     pagination=new Pagination();
-    pagination.setPageCount(4);
     pagination.getStyleClass().add(Pagination.STYLE_CLASS_BULLET);
     pagination.setStyle("-fx-page-information-visible: false;");
 
     ScrollPane resultsScrollPane=new ScrollPane(pagination);
+    resultsScrollPane.setFitToHeight(true);
+    resultsScrollPane.setFitToWidth(true);
     resultsScrollPane.setPadding(new Insets(0, 0, 0, 15));
 
     Separator verticalSeparator=new Separator(Orientation.VERTICAL);
 
+    /* creating SCROLLPANE in which the document clicked will be displayed */
     documentClickedScrollPane=new ScrollPane();
+    documentClickedScrollPane.setFitToHeight(true);
+    documentClickedScrollPane.setFitToWidth(true);
+    documentClickedScrollPane.setPadding(new Insets(20));
 
-    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedScrollPane);
+//    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedScrollPane);
 //    HBox.setHgrow(resultsScrollPane, Priority.ALWAYS);
-    HBox.setHgrow(documentClickedScrollPane, Priority.ALWAYS);
+//    HBox.setHgrow(documentClickedScrollPane, Priority.ALWAYS);
 
     /* creating GRIDPANE in charge of holding everything on scene */
     GridPane gp=new GridPane();
-    gp.addRow(0, navBarSeparated);
-    gp.addRow(1, resultsHBox);
+    gp.addRow(0, navBarHBox);
+    gp.addRow(1, separator1, separator2);
+//    gp.addRow(1, resultsHBox);
+    gp.addRow(2, resultsScrollPane, documentClickedScrollPane);
 
     ColumnConstraints columnConstraints=new ColumnConstraints();
-    columnConstraints.setPercentWidth(100);
+    columnConstraints.setPercentWidth(50);
+    ColumnConstraints columnConstraints2=new ColumnConstraints();
+    columnConstraints2.setPercentWidth(50);
 
-    gp.getColumnConstraints().add(columnConstraints);
+    gp.getColumnConstraints().addAll(columnConstraints, columnConstraints2);
 
     scene=new Scene(gp, clientWidth, clientHeight);
   }

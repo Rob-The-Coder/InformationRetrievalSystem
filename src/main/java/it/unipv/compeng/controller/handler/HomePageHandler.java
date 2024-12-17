@@ -81,7 +81,7 @@ public class HomePageHandler implements ISubcriber{
         } catch (FileNotFoundException e) {
           throw new RuntimeException(e);
         }
-        ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, RetrieveManager.getInstance().booleanRetrieve(homePageGUI.getSearchTextField().getText()));
+        ResultsHandler resultsHandler=new ResultsHandler(resultsGUI, homePageGUI.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(homePageGUI.getSearchTextField().getText()));
 
         Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
         stage.setScene(resultsGUI.getScene());
