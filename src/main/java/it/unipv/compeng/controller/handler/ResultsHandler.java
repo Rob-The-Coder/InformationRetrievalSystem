@@ -1,5 +1,7 @@
 package it.unipv.compeng.controller.handler;
 
+import atlantafx.base.controls.RingProgressIndicator;
+import atlantafx.base.util.Animations;
 import it.unipv.compeng.controller.handler.presets.DocumentCardHandler;
 import it.unipv.compeng.model.document.Document;
 import it.unipv.compeng.model.utility.ISubcriber;
@@ -21,10 +23,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 
 public class ResultsHandler implements ISubcriber{
@@ -113,15 +117,30 @@ public class ResultsHandler implements ISubcriber{
 
         return new EventHandler<ActionEvent>(){
           @Override
-          public void handle(ActionEvent actionEvent) {
+          public void handle(ActionEvent actionEvent){
             DocumentView documentView=new DocumentView();
-            try {
-              documentView.setText(docResults.get(i).read());
-              System.out.println(docResults.get(i).read());
-            } catch (IOException e) {
+            String[] queryTerms=RetrieveManager.parseTerms(computedQuery);
+            String tmpText="";
+            try{
+              tmpText=docResults.get(i).read();
+              String docText=tmpText;
+
+              for(String term : queryTerms){
+                docText=docText.replaceAll("(?i)" + term, "[code]" + term + "[/code]");
+              }//end-for-each
+
+              System.out.println("[font=monospace]" + docText + "[/font]");
+
+              documentView.setText(docText);
+            }catch(IOException e){
               throw new RuntimeException(e);
-            }
+            }catch(IllegalStateException e){
+              documentView.setText(tmpText);
+            }//end-try-catch
+
             resultsGUI.setDocumentView(documentView);
+            var animation=Animations.fadeIn(documentView, Duration.seconds(2));
+            animation.playFromStart();
           }
         };
       }
@@ -131,12 +150,15 @@ public class ResultsHandler implements ISubcriber{
       @Override
       public void handle(KeyEvent keyEvent){
         //If ENTER has been pressed then we proceed with the search
-        if(keyEvent.getCode()== KeyCode.ENTER){
+        if(keyEvent.getCode()==KeyCode.ENTER){
+          resultsGUI.getSearchTextField().setRight(new RingProgressIndicator());
+
           IndexManager.getInstance().subscribe(ResultsHandler.this);
         }//end-if
       }
     };
 
+    this.resultsGUI.getSearchTextField().setText(computedQuery);
     this.resultsGUI.getLogoImageView().setOnMouseClicked(logoClickHandler);
     this.resultsGUI.getClearIcon().setOnMouseClicked(clearIconHandler);
     this.resultsGUI.getSearchIcon().setOnMouseClicked(searchIconHandler);
@@ -156,11 +178,10 @@ public class ResultsHandler implements ISubcriber{
         ResultsGUI results= null;
         try {
           results = new ResultsGUI();
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException e){
           throw new RuntimeException(e);
         }
-        System.out.println(resultsGUI.getSearchTextField().getText());
-        ResultsHandler resultsHandler=new ResultsHandler(results, results.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
+        ResultsHandler resultsHandler=new ResultsHandler(results, resultsGUI.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
 
         Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
         stage.setScene(results.getScene());

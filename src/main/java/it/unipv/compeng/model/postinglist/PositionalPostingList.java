@@ -23,7 +23,7 @@ public class PositionalPostingList extends PostingList implements Serializable {
     public Node(){
       this.termDocFrequency=1;
       this.positions=new ArrayList<>();
-      this.compressedPositions=new VariableByteCode();
+      this.compressedPositions=new VariableByteCode(true);
     }
     /********************************/
     //Getter/Setter
@@ -68,17 +68,15 @@ public class PositionalPostingList extends PostingList implements Serializable {
   /********************************/
   @Serial
   private void writeObject(ObjectOutputStream out) throws IOException{
-    out.writeInt(super.getTermCollectionFrequency());
-    for(Integer docId:docIds){
-      super.compressedDocIds.add(docId);
-    }//end-for
-    out.writeObject(super.compressedDocIds);
+//    for(Node node:super.nodes){
+//      super.compressedDocIds.add(docId);
+//    }//end-for
+//    out.writeObject(super.compressedDocIds);
     out.writeObject(this.postings);
   }
 
   @Serial
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-    super.setTermCollectionFrequency(in.readInt());
     super.compressedDocIds = (VariableByteCode) in.readObject();
     this.postings = (ArrayList<Node>)in.readObject();
   }

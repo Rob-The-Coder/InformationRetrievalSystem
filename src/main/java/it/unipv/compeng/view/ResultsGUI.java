@@ -4,6 +4,7 @@ import atlantafx.base.controls.Card;
 import atlantafx.base.controls.CustomTextField;
 import atlantafx.base.controls.Popover;
 import atlantafx.base.theme.Styles;
+import atlantafx.base.util.BBCodeParser;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -36,7 +37,7 @@ public class ResultsGUI{
   private FontIcon searchIcon=null;
   private Popover searchPopover=null;
   private Pagination pagination=null;
-  private ScrollPane documentClickedScrollPane=null;
+  private VBox documentClickedCard=null;
   private Scene scene=null;
   /********************************/
   //Constructors
@@ -69,13 +70,15 @@ public class ResultsGUI{
     return pagination;
   }
   public void setDocumentView(Card documentView){
-    documentClickedScrollPane.setContent(documentView);
+    if(!documentClickedCard.getChildren().isEmpty()){
+      documentClickedCard.getChildren().removeFirst();
+    }//end-if
+    documentClickedCard.getChildren().add(documentView);
   }
-/********************************/
+  /********************************/
   //Methods
   /********************************/
   private void initComponents() throws FileNotFoundException{
-
     /* Creating TOP NAVBAR where there is the logo and the searchTextField */
 
     //HBox containing the logo and the search TextField
@@ -90,7 +93,12 @@ public class ResultsGUI{
 
     searchIcon=new FontIcon(Material2MZ.SEARCH);
     searchIcon.setCursor(Cursor.HAND);
-    searchPopover=new Popover(new TextFlow(new Text("Hey you can search lol!")));
+    String stringTips="""
+        Welcome in [b]sound hunt![/b] \n
+        A query can be formed using: \n
+        [code]+[/code] which represents a logical [i]OR[/i] operator \n
+        [code]*[/code] which represents a logical [i]AND[/i] operator""";
+    searchPopover=new Popover(BBCodeParser.createLayout(stringTips));
     searchPopover.setArrowLocation(Popover.ArrowLocation.TOP_LEFT);
     searchPopover.setAnimated(true);
     searchPopover.setHeaderAlwaysVisible(false);
@@ -106,7 +114,6 @@ public class ResultsGUI{
     HBox navBarHBox=new HBox(logoImageView, searchTextField);
     navBarHBox.setAlignment(Pos.CENTER_LEFT);
     HBox.setMargin(logoImageView, new Insets(11,0,0,0));
-    navBarHBox.setPadding(new Insets(15, 0, 0, 0));
     navBarHBox.setSpacing(25);
     HBox.setHgrow(searchTextField, Priority.ALWAYS);
 
@@ -129,21 +136,15 @@ public class ResultsGUI{
     Separator verticalSeparator=new Separator(Orientation.VERTICAL);
 
     /* creating SCROLLPANE in which the document clicked will be displayed */
-    documentClickedScrollPane=new ScrollPane();
-    documentClickedScrollPane.setFitToHeight(true);
-    documentClickedScrollPane.setFitToWidth(true);
-    documentClickedScrollPane.setPadding(new Insets(20));
-
-//    HBox resultsHBox=new HBox(resultsScrollPane, verticalSeparator, documentClickedScrollPane);
-//    HBox.setHgrow(resultsScrollPane, Priority.ALWAYS);
-//    HBox.setHgrow(documentClickedScrollPane, Priority.ALWAYS);
+    documentClickedCard=new VBox();
+    documentClickedCard.setPadding(new Insets(20));
 
     /* creating GRIDPANE in charge of holding everything on scene */
     GridPane gp=new GridPane();
     gp.addRow(0, navBarHBox);
     gp.addRow(1, separator1, separator2);
 //    gp.addRow(1, resultsHBox);
-    gp.addRow(2, resultsScrollPane, documentClickedScrollPane);
+    gp.addRow(2, resultsScrollPane, documentClickedCard);
 
     ColumnConstraints columnConstraints=new ColumnConstraints();
     columnConstraints.setPercentWidth(50);

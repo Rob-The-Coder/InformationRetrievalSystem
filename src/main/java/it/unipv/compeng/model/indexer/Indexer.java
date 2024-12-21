@@ -49,6 +49,7 @@ public class Indexer{
   public void stop(){
     executor.shutdown();
     while(!executor.isTerminated()){}
+    System.out.println("Indexing complete.");
   }
   /********************************/
 }

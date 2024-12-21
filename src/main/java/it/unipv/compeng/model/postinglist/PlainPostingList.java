@@ -13,7 +13,12 @@ public class PlainPostingList extends PostingList implements Serializable{
   /********************************/
   //Constructors
   /********************************/
-
+  public PlainPostingList(){
+    this((double)1 /2);
+  }
+  public PlainPostingList(double scoreWeight) {
+    this.scoreWeight = scoreWeight;
+  }
   /********************************/
   //Getter/Setter
   /********************************/
@@ -23,40 +28,25 @@ public class PlainPostingList extends PostingList implements Serializable{
   /********************************/
   @Override
   public void addToPostingList(Term t){
-
-    //Search if same docID was already added to term posting list
-//    IVBCIterator iterator=super.variableByteCode.iterator();
-//    boolean found=false;
-//    while(iterator.hasNext() && !found){
-//      if(t.getDocId()==iterator.next()){
-//        found=true;
-//      }//end-if
-//    }//end-while
-
-
-
     //Insert into t.position inside positions and increment frequency
     insertDocId(t);
-//    if(!found){
-//      //Node non-present
-//      super.docIds.add(t.getDocId());
-////      super.compressedDocIds.add(t.getDocId());
-//    }//end-if
   }
 
   @Serial
   private void writeObject(ObjectOutputStream out) throws IOException{
-    out.writeInt(super.getTermCollectionFrequency());
-    for(Integer docId:docIds){
-      super.compressedDocIds.add(docId);
+    for(Node node:super.nodes){
+      super.compressedDocIds.add(node.getDocId());
+      super.compressedTermDocCounts.add(node.getTermDocCount().intValue());
     }//end-for
+
     out.writeObject(compressedDocIds);
+    out.writeObject(compressedTermDocCounts);
   }
 
   @Serial
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
-    super.setTermCollectionFrequency(in.readInt());
     super.compressedDocIds = (VariableByteCode) in.readObject();
+    super.compressedTermDocCounts= (VariableByteCode) in.readObject();
   }
 
   @Override

@@ -5,6 +5,7 @@ import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.BBCodeParser;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -28,11 +29,11 @@ public class DocumentView extends Card {
   //Getter/Setter
   /********************************/
   public void setText(String text){
-//    TextFlow textFlow=BBCodeParser.createFormattedText(text);
-
-    Text t=new Text(text);
-    t.setFill(Color.WHITE);
-    this.setBody(t);
+    ScrollPane scrollPane=new ScrollPane();
+    scrollPane.setContent(BBCodeParser.createLayout(text));
+    scrollPane.setFitToHeight(true);
+    scrollPane.setFitToWidth(false);
+    this.setBody(scrollPane);
   }
   /********************************/
   //Methods

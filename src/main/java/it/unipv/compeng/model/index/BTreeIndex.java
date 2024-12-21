@@ -15,7 +15,7 @@ public class BTreeIndex extends Index{
   //Constructors
   /********************************/
   public BTreeIndex(){
-    super(new PrefixBTree(2), new PorterStringPreprocessor());
+    super(new PrefixBTree(5), new PorterStringPreprocessor());
   }
   public BTreeIndex(int t){
     super(new PrefixBTree(t), new PorterStringPreprocessor());
@@ -40,7 +40,7 @@ public class BTreeIndex extends Index{
 
   @Override
   public void addToDictionary(Term t){
-    super.dictionary.insert(t, new PlainPostingList());
+    super.dictionary.insert(t, new PlainPostingList(3));
   }
   /********************************/
 }

@@ -1,11 +1,9 @@
 package it.unipv.compeng.main;
 import atlantafx.base.theme.PrimerDark;
 import it.unipv.compeng.controller.handler.HomePageHandler;
-import it.unipv.compeng.controller.handler.ResultsHandler;
 import it.unipv.compeng.exceptions.InvalidStrategyException;
 import it.unipv.compeng.model.utility.IndexManager;
 import it.unipv.compeng.view.HomePageGUI;
-import it.unipv.compeng.view.ResultsGUI;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;

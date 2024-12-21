@@ -13,13 +13,15 @@ public class VariableByteCode implements IVBCIterable, Serializable{
   /********************************/
   //Attributes
   /********************************/
+  private final boolean GAP;
   private final BitSet code;
   private int currentNumberOfBytes;
   private transient int lastInserted;
   /********************************/
   //Constructors
   /********************************/
-  public VariableByteCode(){
+  public VariableByteCode(boolean gap){
+    this.GAP=gap;
     this.code=new BitSet();
     this.currentNumberOfBytes=0;
     this.lastInserted=0;
@@ -85,8 +87,12 @@ public class VariableByteCode implements IVBCIterable, Serializable{
 //  }
 
   public void add(int n){
-    addGap(n-lastInserted);
-    lastInserted=n;
+    if(GAP){
+      addGap(n-this.lastInserted);
+      this.lastInserted=n;
+    }else{
+      addGap(n);
+    }//end-if
   }
 
   private void addGap(int gap){
@@ -269,18 +275,34 @@ public class VariableByteCode implements IVBCIterable, Serializable{
   public int[] toArray(){
     ArrayList<Integer> list=new ArrayList<>();
     IVBCIterator iterator=iterator();
-    int prev=0;
-    while(iterator.hasNext()){
-      prev=prev+iterator.next();
-      list.add(prev);
-    }//end-while
 
+
+    if(this.GAP){
+      int prev=0;
+      while(iterator.hasNext()){
+        prev=prev+iterator.next();
+        list.add(prev);
+      }//end-while
+    }else{
+      while(iterator.hasNext()){;
+        list.add(iterator.next());
+      }//end-while
+    }//end-if
     return list.stream().mapToInt(i->i).toArray();
   }
 
   @Override
   public IVBCIterator iterator(){
     return new VBCIterator(this);
+  }
+
+  public static void main(String[] args){
+    VariableByteCode vbc=new VariableByteCode(false);
+    vbc.add(10);
+    vbc.add(15);
+    vbc.add(10);
+
+    vbc.print();
   }
   /********************************/
 }

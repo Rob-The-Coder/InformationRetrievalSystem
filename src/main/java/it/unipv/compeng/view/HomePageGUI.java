@@ -1,11 +1,15 @@
 package it.unipv.compeng.view;
 
 import atlantafx.base.controls.CustomTextField;
+import atlantafx.base.controls.Notification;
 import atlantafx.base.controls.Popover;
+import atlantafx.base.controls.RingProgressIndicator;
 import atlantafx.base.theme.Styles;
+import atlantafx.base.util.BBCodeParser;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -74,7 +78,12 @@ public class HomePageGUI{
 
     searchIcon=new FontIcon(Material2MZ.SEARCH);
     searchIcon.setCursor(Cursor.HAND);
-    searchPopover=new Popover(new TextFlow(new Text("Hey you can search lol!")));
+    String stringTips="""
+        Welcome in [b]sound hunt![/b] \n
+        A query can be formed using: \n
+        [code]+[/code] which represents a logical [i]OR[/i] operator \n
+        [code]*[/code] which represents a logical [i]AND[/i] operator""";
+    searchPopover=new Popover(BBCodeParser.createLayout(stringTips));
     searchPopover.setArrowLocation(Popover.ArrowLocation.RIGHT_CENTER);
     searchPopover.setAnimated(true);
     searchPopover.setHeaderAlwaysVisible(false);

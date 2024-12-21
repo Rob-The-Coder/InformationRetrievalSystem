@@ -1,5 +1,6 @@
 package it.unipv.compeng.controller.handler;
 
+import atlantafx.base.controls.RingProgressIndicator;
 import it.unipv.compeng.model.utility.ISubcriber;
 import it.unipv.compeng.model.utility.IndexManager;
 import it.unipv.compeng.model.utility.RetrieveManager;
@@ -9,6 +10,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Dimension2D;
 import javafx.scene.Node;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -56,6 +58,8 @@ public class HomePageHandler implements ISubcriber{
         //If ENTER has been pressed then we proceed with the search
         if(keyEvent.getCode()== KeyCode.ENTER){
           //In order to search, I need to wait for the indexes to be created/loaded
+          homePageGUI.getSearchTextField().setRight(new RingProgressIndicator());
+
           IndexManager.getInstance().subscribe(HomePageHandler.this);
         }//end-if
       }

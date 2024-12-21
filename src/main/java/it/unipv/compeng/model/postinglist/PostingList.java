@@ -4,74 +4,108 @@ import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.VariableByteCode;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
 public abstract class PostingList{
+  /********************************/
+  //NESTED INNER CLASS
+  /********************************/
+  protected static class Node implements Comparable<Node>{
+    /********************************/
+    //Attributes
+    /********************************/
+    protected final Integer docId;
+    protected Double termDocCount;
+    /********************************/
+    //Constructor
+    /********************************/
+    public Node(Integer docId){
+      this.docId=docId;
+      this.termDocCount=0.0;
+    }
+
+    public Node(Integer docId, Double termDocCount){
+      this.docId=docId;
+      this.termDocCount=termDocCount;
+    }
+    /********************************/
+    //Getter/Setter
+    /********************************/
+    public Integer getDocId(){
+      return docId;
+    }
+
+    public Double getTermDocCount(){
+      return termDocCount;
+    }
+    /********************************/
+    //Methods
+    /********************************/
+    public void incrementTermDocFrequencies(Double termDocFrequencies){
+      this.termDocCount+=termDocFrequencies;
+    }
+
+    @Override
+    public int compareTo(Node o){
+      if(this.docId.equals(o.getDocId())){
+        return 0;
+      }else if(this.docId<o.getDocId()){
+        return -1;
+      }else{
+        return 1;
+      }//end-if
+    }
+
+    @Override
+    public boolean equals(Object obj){
+      Node n=(Node)obj;
+      return this.docId.equals(n.getDocId());
+    }
+    /********************************/
+  }
   /********************************/
   //Attributes
   /********************************/
-  private int termCollectionFrequency;
-  protected final transient ArrayList<Integer> docIds;
+  protected transient ArrayList<Node> nodes;
   protected VariableByteCode compressedDocIds;
+  protected VariableByteCode compressedTermDocCounts;
+  protected transient double scoreWeight;
   /********************************/
   //Constructor
   /********************************/
   public PostingList(){
-    this.termCollectionFrequency=0;
-    this.docIds = new ArrayList<>();
-    this.compressedDocIds=new VariableByteCode();
+    this.nodes=new ArrayList<>();
+    this.compressedDocIds=new VariableByteCode(true);
+    this.compressedTermDocCounts=new VariableByteCode(false);
   }
   /********************************/
   //Getter/Setter
   /********************************/
-  public int getTermCollectionFrequency(){
-    return termCollectionFrequency;
-  }
-
-  public void setTermCollectionFrequency(int termCollectionFrequency){
-    this.termCollectionFrequency=termCollectionFrequency;
-  }
 
   /********************************/
   //Methods
   /********************************/
   public int insertDocId(Term t){
-    int pos=binarySearchDocId(t.getDocId());
+    Node node=new Node(t.getDocId(), scoreWeight);
+    int pos=Collections.binarySearch(nodes, node);
 
-    if(pos>=this.docIds.size() || this.docIds.get(pos)!=t.getDocId()){
-      this.termCollectionFrequency+=1;
-      this.docIds.add(pos,  t.getDocId());
+    if(pos<0){
+      nodes.add(Math.abs(pos+1), node);
+    }else if(nodes.get(pos).equals(node)){
+      nodes.get(pos).incrementTermDocFrequencies(scoreWeight);
     }//end-if
 
     return pos;
   }
 
-  private int binarySearchDocId(int target){
-    // Initialize double closed interval [0, n-1]
-    int left=0, right=docIds.size()-1;
-
-    while(left<=right){
-      int mid=left+(right-left)/2;
-
-      // Check if x is present at mid
-      if(target==docIds.get(mid)){
-        return mid;
-      }//end-if
-
-      // If x greater, ignore left half
-      if(docIds.get(mid)<target){
-        left=mid + 1;
-        // If x is smaller, ignore right half
-      }else{
-        right=mid - 1;
-      }//end-if
-    }//end-while
-
-    return left;
-  }
-
   public abstract void addToPostingList(Term t);
 
-  public int[] toArray(){
+  public int[] docIdsToArray(){
     return compressedDocIds.toArray();
+  }
+
+  public int[] termDocFrequenciesToArray(){
+    return compressedTermDocCounts.toArray();
   }
   /********************************/
 }

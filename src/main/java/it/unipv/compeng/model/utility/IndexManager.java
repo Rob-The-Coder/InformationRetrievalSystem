@@ -83,24 +83,25 @@ public class IndexManager extends Thread{
 
             Indexer.getInstance().setIndex(tmpIndex);
             Indexer.getInstance().index();
-            System.out.println("Indexing complete.");
           }else{
             System.out.println("Index already exists.");
           }//end-if
         }//end-for
         Indexer.getInstance().stop();
 
-        for(String index:indexes){
-          //Deserializing index from memory and adding it to indexArrayList
-          FileInputStream fileInputStream=new FileInputStream(new StringBuilder(indexesFolder).append(File.separator).append(index).append(".bin").toString());
-          ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
-          Index i = (Index) objectInputStream.readObject();
-          objectInputStream.close();
-          if(!indexArrayList.contains(i)){
-            System.out.println("Index added.");
-            indexArrayList.add(i);
-          }//end-if
-        }//end-for-each
+        if(indexArrayList.isEmpty() || indexArrayList.size()<indexes.length){
+          for(String index:indexes){
+            //Deserializing index from memory and adding it to indexArrayList
+            FileInputStream fileInputStream=new FileInputStream(new StringBuilder(indexesFolder).append(File.separator).append(index).append(".bin").toString());
+            ObjectInputStream objectInputStream=new ObjectInputStream(fileInputStream);
+            Index i = (Index) objectInputStream.readObject();
+            objectInputStream.close();
+            if(!indexArrayList.contains(i)){
+              System.out.println("Index added.");
+              indexArrayList.add(i);
+            }//end-if
+          }//end-for-each
+        }//end-if
         notifySubscribers();
 
         sleep(1000000);
@@ -116,10 +117,19 @@ public class IndexManager extends Thread{
     for(Index index:indexArrayList){
       PostingList pl=index.getPostingList(s);
       if(pl!=null){
-        int[] tmpDocIds=pl.toArray();
-        for(int docId:tmpDocIds){
-          documents.add(new SampleTextDocument(listOfFiles.get(docId), docId));
-        }//end-for-each
+        int[] tmpDocIds=pl.docIdsToArray();
+        int[] tmpScores=pl.termDocFrequenciesToArray();
+        for(int i=0; i<tmpDocIds.length; i+=1){
+          Document docToAdd=new SampleTextDocument(this.listOfFiles.get(tmpDocIds[i]), tmpDocIds[i]);
+          docToAdd.incrementScore(tmpScores[i]);
+
+          int pos=Collections.binarySearch(documents, docToAdd, Document.getDocIdComparator());
+          if(pos<0){
+            documents.add(Math.abs(pos+1), docToAdd);
+          }else if(documents.get(pos).equals(docToAdd)){
+            documents.get(pos).incrementScore(tmpScores[i]);
+          }//end-if
+        }//end-for
       }//end-if
     }//end-for-each
 

@@ -9,7 +9,7 @@ import it.unipv.compeng.model.term.Term;
 
 public class SoundexIndex extends Index{
   public SoundexIndex(){
-    super(new PrefixBTree(2), new PlainStringPreprocessor());
+    super(new PrefixBTree(5), new PlainStringPreprocessor());
   }
 
   @Override
@@ -41,7 +41,7 @@ public class SoundexIndex extends Index{
     if(!term.toStringBuilder().isEmpty()){
       classifyTerm(term);
 
-      super.dictionary.insert(term, new PlainPostingList());
+      super.dictionary.insert(term, new PlainPostingList(1));
     }//end-if
   }
 

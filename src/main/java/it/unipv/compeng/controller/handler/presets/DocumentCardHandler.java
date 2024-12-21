@@ -30,7 +30,7 @@ public class DocumentCardHandler {
   /********************************/
   private void initComponents(){
     this.documentCard.setTitle(document.getTitle());
-    this.documentCard.setDescription("This is the "+document.getDocId()+" document");
+    this.documentCard.setDescription("This is the "+document.getDocId()+" document with " + document.getScore() + " points.");
   }
   /********************************/
 }
