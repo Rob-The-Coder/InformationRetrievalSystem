@@ -1,13 +1,14 @@
 package it.unipv.compeng.model.indexer;
 
 import it.unipv.compeng.model.index.Index;
-import it.unipv.compeng.model.preprocessing.Preprocessor;
+import it.unipv.compeng.model.utility.Logger;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.Properties;
+
+/***********************************************************/
+//ABSTRACT CLASS RunnableIndexingStrategy DEFINE THE LAYOUT OF EACH STRATEGY
+/***********************************************************/
 public abstract class RunnableIndexingStrategy implements IndexingStrategy{
   /********************************/
   //Attributes
@@ -20,10 +21,6 @@ public abstract class RunnableIndexingStrategy implements IndexingStrategy{
   public RunnableIndexingStrategy(Index index) {
     this.index = index;
   }
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/
@@ -44,12 +41,12 @@ public abstract class RunnableIndexingStrategy implements IndexingStrategy{
     properties.load(new FileInputStream("Properties/Properties"));
     String indexesFolder=properties.getProperty(PROPERTY_INDEXES_FOLDER);
 
-    FileOutputStream fileOutputStream=new FileOutputStream(new StringBuilder(indexesFolder).append("/").append(index.getClass().getName()).append(".bin").toString());
+    FileOutputStream fileOutputStream=new FileOutputStream(new StringBuilder(indexesFolder).append(File.separator).append(index.getClass().getName()).append(".bin").toString());
     ObjectOutputStream objectOutputStream=new ObjectOutputStream(fileOutputStream);
     objectOutputStream.writeObject(index);
     objectOutputStream.flush();
     objectOutputStream.close();
-    System.out.println("Storing complete");
+    Logger.getInstance().log("Storing complete for index "+ index.getClass().getName());
   }
   /********************************/
 }

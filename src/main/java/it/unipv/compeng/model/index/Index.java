@@ -11,9 +11,13 @@ import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable
 
 import java.io.Serializable;
 
+/***********************************************************/
+//ABSTRACT REPRESENTATION OF AN INDEX
+/***********************************************************/
 public abstract class Index implements Serializable{
   /********************************/
   //Attributes
+  /********************************/
   protected Dictionary<Term, PostingList> dictionary;
   protected transient RunnableIndexingStrategy strategy;
   protected Preprocessor preprocessor;

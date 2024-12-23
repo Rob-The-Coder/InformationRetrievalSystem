@@ -6,6 +6,10 @@ import it.unipv.compeng.model.term.Term;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/***********************************************************/
+//CONCRETE IMPLEMENTATION OF A DICTIONARY.
+//IN PARTICULAR, THIS IS THE IMPLEMENTATION OF A PREFIX BTREE
+/***********************************************************/
 public class PrefixBTree extends Dictionary<Term, PostingList>{
   /********************************/
   //NESTED INNER CLASS
@@ -82,7 +86,6 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
         if(!isLeaf()){
           getChild(i).traverseSubtree();
         }else{
-//        System.out.print(getKey(i).toString() + ": " + getPostingList(i).toString() + " | ");
           System.out.print(getKey(i).toString() + " | ");
         }//end-if
       }//end-for
@@ -126,12 +129,49 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
   /********************************/
   public PrefixBTree(int t){
     this.t=t;
-    root=new BTreeNode(t);
+    this.root=new BTreeNode(t);
   }
   /********************************/
   //Getters/Setters
   /********************************/
+  @Override
+  public PostingList getPostingList(Term t){
+    BTreeNode node=getNode(t);
 
+    if(node!=null){
+      int i=0;
+      while(node.getKey(i).compareTo(t)!=0){
+        i+=1;
+      }//end-while
+
+      return node.getPostingList(i);
+    }//end-if
+
+    return null;
+  }
+
+  private BTreeNode getNode(Term t){
+    BTreeNode current=root;
+
+    while(current != null){
+      int i=0;
+
+      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
+        i+=1;
+      }//end-while
+
+      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
+        return current;
+      }//end-if
+
+      if(current.isLeaf()){
+        return null;
+      }else{
+        current=current.getChild(i);
+      }//end-if
+    }//end-while
+    return null;
+  }
   /********************************/
   //Methods
   /********************************/
@@ -159,35 +199,16 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
     return null;
   }
 
-  private BTreeNode getNode(Term t){
-    BTreeNode current=root;
-
-    while(current != null){
-      int i=0;
-
-      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
-        i+=1;
-      }//end-while
-
-      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
-        return current;
-      }//end-if
-
-      if(current.isLeaf()){
-        return null;
-      }else{
-        current=current.getChild(i);
-      }//end-if
-    }//end-while
-    return null;
-  }
-
   public void traverse(){
     System.out.print("| ");
     root.traverseSubtree();
     System.out.println();
   }
 
+  //X is non-full internal node.
+  //i is the index such that x.getChild(i) is a full child of X, hence is to split.
+  //Y is the child of x which is full and is to split.
+  //Z becomes the sibling of Y, so the child of X.
   private void splitSeparator(BTreeNode x, int i){
     BTreeNode z=new BTreeNode(this.t);
     BTreeNode y=x.getChild(i);
@@ -347,45 +368,5 @@ public class PrefixBTree extends Dictionary<Term, PostingList>{
     }//end-if
     postingList.addToPostingList(key);
   }
-
-  @Override
-  public void addToPostingList(Term t){
-    BTreeNode current=root;
-
-    while(current != null){
-      int i=0;
-
-      while(i<current.getN() && t.compareTo(current.getKey(i))>0){
-        i+=1;
-      }//end-while
-
-      if(i<current.getN() && t.compareTo(current.getKey(i)) == 0){
-        current.postingLists[i].addToPostingList(t);
-      }//end-if
-
-      if(current.isLeaf()){
-        current=null;
-      }else{
-        current=current.getChild(i);
-      }//end-if
-    }//end-while
-  }
-
-  @Override
-  public PostingList getPostingList(Term t){
-    BTreeNode node=getNode(t);
-
-    if(node!=null){
-      int i=0;
-      while(node.getKey(i).compareTo(t)!=0){
-        i+=1;
-      }//end-while
-
-      return node.getPostingList(i);
-    }//end-if
-
-    return null;
-  }
-
   /********************************/
 }

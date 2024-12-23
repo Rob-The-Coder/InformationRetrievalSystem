@@ -1,10 +1,12 @@
 package it.unipv.compeng.model.utility.iterator.VBCIterator;
 
-import com.google.errorprone.annotations.Var;
 import it.unipv.compeng.model.utility.VariableByteCode;
 
-import java.util.Arrays;
 import java.util.BitSet;
+
+/***********************************************************/
+//CLASS VBCIterator IS A CONCRETE IMPLEMENTATION OF ITERATOR
+/***********************************************************/
 public class VBCIterator implements IVBCIterator{
   /********************************/
   //Attributes
@@ -71,28 +73,6 @@ public class VBCIterator implements IVBCIterator{
     }//end-for
     
     return ris;
-  }
-
-  public static void main(String[] args){
-//    VariableByteCode vbc=new VariableByteCode(true);
-//
-//    vbc.add(100);
-//    vbc.add(228);
-//    vbc.add(230);
-//    vbc.add(65766);
-//    vbc.add(70000);
-
-    VariableByteCode variableByteCode=new VariableByteCode(false);
-    variableByteCode.add(10);
-    variableByteCode.add(15);
-    variableByteCode.add(10);
-
-    IVBCIterator iterator=new VBCIterator(variableByteCode);
-    while(iterator.hasNext()){
-      System.out.println(iterator.next());
-    }//end-while
-//    System.out.println(vbc);
-//    System.out.println(Arrays.toString(vbc.toArray()));
   }
   /********************************/
 }

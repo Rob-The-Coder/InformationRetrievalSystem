@@ -1,8 +1,15 @@
-package it.unipv.compeng.model.utility;
+package it.unipv.compeng.controller.manager;
 
 import it.unipv.compeng.model.document.Document;
+import it.unipv.compeng.model.utility.Logger;
+import it.unipv.compeng.model.utility.StopList;
 
 import java.util.*;
+
+/***********************************************************/
+//CLASS RetrieveManager HAS THE PURPOSE TO COUPLE ALL THE
+//ALGORITHMS USED FOR RETRIEVING INFORMATION
+/***********************************************************/
 public class RetrieveManager{
   /********************************/
   //Attributes
@@ -36,29 +43,32 @@ public class RetrieveManager{
     String signs=parseSigns(s);
     String[] splittedString=parseTerms(s);
 
-    System.out.println(signs);
-    System.out.println(Arrays.toString(splittedString));
+    Logger.getInstance().log(signs);
+    Logger.getInstance().log(Arrays.toString(splittedString));
 
     //Computing
     if(splittedString.length>=1){
-      System.out.println("Retrieving initial term:");
+      Logger.getInstance().log("Retrieving initial term:");
       this.docs=IndexManager.getInstance().searchIndexes(splittedString[0]);
-      System.out.println(splittedString[0] + " retrieved "+this.docs.size()+" documents");
+      Logger.getInstance().log(splittedString[0] + " retrieved "+this.docs.size()+" documents");
+
       StringBuilder sb=new StringBuilder(signs);
       for(int i=0; i<sb.length(); i+=1){
-        if(sb.charAt(i)==AND_SIGN){
-          System.out.println("Computing and");
-          and(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
-          System.out.println("Retrieved "+this.docs.size()+" documents after computing and");
-        }else if(sb.charAt(i)==OR_SIGN){
-          System.out.println("Computing or");
-          or(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
-          System.out.println("Retrieved "+this.docs.size()+" documents after computing or");
+        if(!StopList.getInstance().contains(splittedString[i+1])){
+          if(sb.charAt(i)==AND_SIGN){
+            Logger.getInstance().log("Computing and between " + splittedString[i] + " and " + splittedString[i+1]);
+            and(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
+            Logger.getInstance().log("Retrieved "+this.docs.size()+" documents after computing and");
+          }else if(sb.charAt(i)==OR_SIGN){
+            Logger.getInstance().log("Computing or between " + splittedString[i] + " and " + splittedString[i+1]);
+            or(IndexManager.getInstance().searchIndexes(splittedString[i+1]));
+            Logger.getInstance().log("Retrieved "+this.docs.size()+" documents after computing or");
+          }//end-if
         }//end-if
       }//end-for
     }//end-if
 
-    System.out.println("returning: "+this.docs.size()+" documents.");
+    Logger.getInstance().log("Returning: "+this.docs.size()+" documents");
     this.docs.sort(Document.getScoreComparator().reversed());
 
     //Limiting return size to RETURN_SIZE_LIMIT
@@ -76,7 +86,8 @@ public class RetrieveManager{
   }
 
   public static String[] parseTerms(String query){
-    return query.replaceAll(" ", "").split("[+*]");
+    String regex="["+AND_SIGN+OR_SIGN+"]";
+    return query.replaceAll(" ", "").split(regex);
   }
 
   private void and(ArrayList<Document> docs){

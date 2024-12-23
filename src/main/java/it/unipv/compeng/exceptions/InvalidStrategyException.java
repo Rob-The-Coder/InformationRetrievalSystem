@@ -1,21 +1,3 @@
 package it.unipv.compeng.exceptions;
 
-public class InvalidStrategyException extends Exception{
-  /********************************/
-  //Attributes
-  /********************************/
-
-  /********************************/
-  //Constructors
-  /********************************/
-
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
-  /********************************/
-  //Methods
-  /********************************/
-
-  /********************************/
-}
+public class InvalidStrategyException extends Exception{ }

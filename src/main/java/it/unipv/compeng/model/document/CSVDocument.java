@@ -1,6 +1,10 @@
 package it.unipv.compeng.model.document;
 
 import java.io.IOException;
+
+/***********************************************************/
+//CONCRETE CSV IMPLEMENTATION OF A DOCUMENT
+/***********************************************************/
 public class CSVDocument extends Document{
   /********************************/
   //Attributes

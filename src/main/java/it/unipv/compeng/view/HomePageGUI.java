@@ -1,20 +1,15 @@
 package it.unipv.compeng.view;
 
 import atlantafx.base.controls.CustomTextField;
-import atlantafx.base.controls.Notification;
 import atlantafx.base.controls.Popover;
-import atlantafx.base.controls.RingProgressIndicator;
 import atlantafx.base.theme.Styles;
 import atlantafx.base.util.BBCodeParser;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
 import org.kordamp.ikonli.javafx.*;
 import org.kordamp.ikonli.material2.Material2AL;
@@ -23,6 +18,9 @@ import org.kordamp.ikonli.material2.Material2MZ;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/***********************************************************/
+//CLASS HomePageGUI IS THE WELCOME PAGE
+/***********************************************************/
 public class HomePageGUI{
   /********************************/
   //Attributes
@@ -62,7 +60,7 @@ public class HomePageGUI{
   //Methods
   /********************************/
   private void initComponents() throws FileNotFoundException{
-    //HBox containing the logo
+    /* HBox containing the logo */
     Pane whitePane1=new Pane();
     Pane whitePane2=new Pane();
     HBox.setHgrow(whitePane1, Priority.ALWAYS);
@@ -72,7 +70,7 @@ public class HomePageGUI{
     logoImageView.setFitWidth((double)clientWidth /3);
     HBox logoHBox=new HBox(whitePane1, logoImageView, whitePane2);
 
-    //HBox containing the search TextField
+    /* HBox containing the search TextField */
     searchTextField=new CustomTextField();
     searchTextField.getStyleClass().addAll(Styles.LARGE, Styles.ROUNDED);
 
@@ -98,7 +96,7 @@ public class HomePageGUI{
 
     HBox searchHBox=new HBox(searchTextField);
 
-    //VBox containing the logo and the searchTextField
+    /* VBox containing the logo and the searchTextField */
     VBox homePageVBox=new VBox(0, logoHBox, searchHBox);
     homePageVBox.setAlignment(Pos.TOP_CENTER);
 

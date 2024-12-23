@@ -1,11 +1,18 @@
 package it.unipv.compeng.model.term;
 
+/***********************************************************/
+//CONCRETE REPRESENTATION OF A TERM WHICH IS A STRING
+/***********************************************************/
 public class StringTerm extends Term{
-
+  /********************************/
+  //Contructor
+  /********************************/
   public StringTerm(String term) {
     super.termEquivalentString = term;
   }
-
+  /********************************/
+  //Methods
+  /********************************/
   @Override
   public Term returnDigits(int len){
     return new StringTerm(super.termEquivalentString.chars().limit(len).collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString());
@@ -40,4 +47,5 @@ public class StringTerm extends Term{
   public int hashCode(){
     return super.termEquivalentString.hashCode();
   }
+  /********************************/
 }

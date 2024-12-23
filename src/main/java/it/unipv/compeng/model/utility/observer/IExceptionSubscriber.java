@@ -1,14 +1,12 @@
-package it.unipv.compeng.model.utility.iterator.VBCIterator;
+package it.unipv.compeng.model.utility.observer;
 
 /***********************************************************/
-//INTERFACE IVBCIterator FROM ITERATOR PATTERN
+//INTERFACE IExceptionSubscriber FROM OBSERVER PATTERN
 /***********************************************************/
-public interface IVBCIterator{
+public interface IExceptionSubscriber{
   /********************************/
   //Methods
   /********************************/
-  boolean hasNext();
-  int next();
-  int getPointer();
+  void update(Exception e);
   /********************************/
 }

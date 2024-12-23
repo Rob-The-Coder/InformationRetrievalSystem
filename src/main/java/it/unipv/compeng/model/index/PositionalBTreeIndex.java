@@ -6,39 +6,44 @@ import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
 import it.unipv.compeng.model.term.Term;
 
+/***********************************************************/
+//CONCRETE IMPLEMENTATION OF CLASS Index WHICH USES THE
+//PositionalPostingList
+/***********************************************************/
 public class PositionalBTreeIndex extends Index{
-  /********************************/
-  //Attributes
-  /********************************/
-
   /********************************/
   //Constructor
   /********************************/
+  public PositionalBTreeIndex(){
+    super(new PrefixBTree(5), new PorterStringPreprocessor());
+  }
+
   public PositionalBTreeIndex(int t){
-    super(new PrefixBTree(t), new PorterStringPreprocessor(null));
+    super(new PrefixBTree(t), new PorterStringPreprocessor());
   }
   /********************************/
   //Getter/Setter
   /********************************/
-
-  /********************************/
-  //Methods
-  /********************************/
   @Override
-  public PositionalPostingList getPostingList(Term t) {
-    return (PositionalPostingList)super.dictionary.getPostingList(t);
+  public PostingList getPostingList(Term t) {
+    return super.dictionary.getPostingList(t);
   }
 
   @Override
   public PostingList getPostingList(String s) {
-    System.out.println(getCorrectTerm(s));
-    return getPostingList(getCorrectTerm(s));
+    Term t=getCorrectTerm(s);
+    if(t!=null){
+      return getPostingList(t);
+    }else{
+      return null;
+    }//end-if
   }
-
+  /********************************/
+  //Methods
+  /********************************/
   @Override
   public void addToDictionary(Term t) {
     super.dictionary.insert(t, new PositionalPostingList());
   }
-
   /********************************/
 }

@@ -5,11 +5,11 @@ import it.unipv.compeng.model.utility.VariableByteCode;
 
 import java.io.*;
 
+/***********************************************************/
+//CLASS PlainPostingList IS A CONCRETE IMPLEMENTATION OF A
+//NORMAL PostingList
+/***********************************************************/
 public class PlainPostingList extends PostingList implements Serializable{
-  /********************************/
-  //Attributes
-  /********************************/
-
   /********************************/
   //Constructors
   /********************************/
@@ -20,10 +20,6 @@ public class PlainPostingList extends PostingList implements Serializable{
     this.scoreWeight = scoreWeight;
   }
   /********************************/
-  //Getter/Setter
-  /********************************/
-
-  /********************************/
   //Methods
   /********************************/
   @Override
@@ -32,6 +28,7 @@ public class PlainPostingList extends PostingList implements Serializable{
     insertDocId(t);
   }
 
+  //Serializing/compressing docIds and termCounts
   @Serial
   private void writeObject(ObjectOutputStream out) throws IOException{
     for(Node node:super.nodes){
@@ -43,6 +40,7 @@ public class PlainPostingList extends PostingList implements Serializable{
     out.writeObject(compressedTermDocCounts);
   }
 
+  //Deserializing compressed docIds and termCounts
   @Serial
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException{
     super.compressedDocIds = (VariableByteCode) in.readObject();

@@ -1,6 +1,9 @@
 package it.unipv.compeng.model.document;
 import java.io.*;
 
+/***********************************************************/
+//CONCRETE TXT IMPLEMENTATION OF A DOCUMENT
+/***********************************************************/
 public class SampleTextDocument extends Document{
   /********************************/
   //Attributes
@@ -31,10 +34,6 @@ public class SampleTextDocument extends Document{
       throw new IllegalArgumentException("File has no extension");
     }//end-if
   }
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/

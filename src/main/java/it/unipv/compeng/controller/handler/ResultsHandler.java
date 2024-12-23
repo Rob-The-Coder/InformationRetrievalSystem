@@ -4,13 +4,15 @@ import atlantafx.base.controls.RingProgressIndicator;
 import atlantafx.base.util.Animations;
 import it.unipv.compeng.controller.handler.presets.DocumentCardHandler;
 import it.unipv.compeng.model.document.Document;
-import it.unipv.compeng.model.utility.ISubcriber;
-import it.unipv.compeng.model.utility.IndexManager;
-import it.unipv.compeng.model.utility.RetrieveManager;
+import it.unipv.compeng.model.utility.Logger;
+import it.unipv.compeng.model.utility.observer.ISubcriber;
+import it.unipv.compeng.controller.manager.IndexManager;
+import it.unipv.compeng.controller.manager.RetrieveManager;
 import it.unipv.compeng.view.HomePageGUI;
 import it.unipv.compeng.view.ResultsGUI;
 import it.unipv.compeng.view.presets.DocumentCard;
 import it.unipv.compeng.view.presets.DocumentView;
+import it.unipv.compeng.view.presets.ExceptionDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,9 +30,11 @@ import javafx.util.Duration;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
-
+/***********************************************************/
+//CLASS ResultHandler PER MVC ARCHITECTURE, HANDLES ALL THE
+//USER INTERACTION WITH THE ResultsGUI view
+/***********************************************************/
 public class ResultsHandler implements ISubcriber{
   /********************************/
   //Attributes
@@ -49,34 +53,31 @@ public class ResultsHandler implements ISubcriber{
     initComponents();
   }
   /********************************/
-  //Getter/Setter
-  /********************************/
-
-  /********************************/
   //Methods
   /********************************/
   private void initComponents(){
+    //Handler for logo click
     EventHandler<MouseEvent> logoClickHandler=new EventHandler<MouseEvent>() {
       @Override
-      public void handle(MouseEvent mouseEvent) {
+      public void handle(MouseEvent mouseEvent){
         Stage stage=(Stage)((Node)mouseEvent.getSource()).getScene().getWindow();
 
-        HomePageGUI homePageGUI= null;
-        try {
-          homePageGUI = new HomePageGUI();
-        } catch (FileNotFoundException e) {
-          throw new RuntimeException(e);
-        }
-        HomePageHandler homePageHandler=new HomePageHandler(homePageGUI);
+        try{
+          HomePageGUI homePageGUI=new HomePageGUI();
+          HomePageHandler homePageHandler=new HomePageHandler(homePageGUI);
 
-        Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
-        stage.setScene(homePageGUI.getScene());
-        stage.setTitle("Home");
-        stage.setWidth(previousDimension.getWidth());
-        stage.setHeight(previousDimension.getHeight());
+          Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
+          stage.setScene(homePageGUI.getScene());
+          stage.setTitle("Home");
+          stage.setWidth(previousDimension.getWidth());
+          stage.setHeight(previousDimension.getHeight());
+        }catch(FileNotFoundException e) {
+          ExceptionDialog exceptionDialog=new ExceptionDialog(e, stage);
+        }//end-try-catch
       }
     };
 
+    //Handler for x in searchTextField which clears its content
     EventHandler<MouseEvent> clearIconHandler=new EventHandler<MouseEvent>(){
       @Override
       public void handle(MouseEvent mouseEvent){
@@ -84,6 +85,7 @@ public class ResultsHandler implements ISubcriber{
       }
     };
 
+    //Handler for lens in searchTextField which pops up the instructions
     EventHandler<MouseEvent> searchIconHandler=new EventHandler<MouseEvent>(){
       @Override
       public void handle(MouseEvent mouseEvent){
@@ -91,6 +93,7 @@ public class ResultsHandler implements ISubcriber{
       }
     };
 
+    //Handler for pagination next or previous
     Callback<Integer, Node> callback=new Callback<Integer, Node>(){
       @Override
       public Node call(Integer integer){
@@ -129,11 +132,11 @@ public class ResultsHandler implements ISubcriber{
                 docText=docText.replaceAll("(?i)" + term, "[code]" + term + "[/code]");
               }//end-for-each
 
-              System.out.println("[font=monospace]" + docText + "[/font]");
+              Logger.getInstance().log("[font=monospace]" + docText + "[/font]");
 
               documentView.setText(docText);
             }catch(IOException e){
-              throw new RuntimeException(e);
+              ExceptionDialog exceptionDialog=new ExceptionDialog(e, (Stage)((Node)actionEvent.getSource()).getScene().getWindow());
             }catch(IllegalStateException e){
               documentView.setText(tmpText);
             }//end-try-catch
@@ -146,6 +149,7 @@ public class ResultsHandler implements ISubcriber{
       }
     };
 
+    //Handler for key typing in searchTextField
     EventHandler<KeyEvent> searchHandler=new EventHandler<KeyEvent>(){
       @Override
       public void handle(KeyEvent keyEvent){
@@ -158,6 +162,7 @@ public class ResultsHandler implements ISubcriber{
       }
     };
 
+    //Adding handlers
     this.resultsGUI.getSearchTextField().setText(computedQuery);
     this.resultsGUI.getLogoImageView().setOnMouseClicked(logoClickHandler);
     this.resultsGUI.getClearIcon().setOnMouseClicked(clearIconHandler);
@@ -175,19 +180,18 @@ public class ResultsHandler implements ISubcriber{
         //Once the indexes are loaded I can proceed with the search
         Stage stage=(Stage)resultsGUI.getScene().getWindow();
 
-        ResultsGUI results= null;
         try {
-          results = new ResultsGUI();
-        } catch (FileNotFoundException e){
-          throw new RuntimeException(e);
-        }
-        ResultsHandler resultsHandler=new ResultsHandler(results, resultsGUI.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
+          ResultsGUI results=new ResultsGUI();
+          ResultsHandler resultsHandler=new ResultsHandler(results, resultsGUI.getSearchTextField().getText(), RetrieveManager.getInstance().booleanRetrieve(resultsGUI.getSearchTextField().getText()));
 
-        Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
-        stage.setScene(results.getScene());
-        stage.setTitle("Results");
-        stage.setWidth(previousDimension.getWidth());
-        stage.setHeight(previousDimension.getHeight());
+          Dimension2D previousDimension=new Dimension2D(stage.getWidth(), stage.getHeight());
+          stage.setScene(results.getScene());
+          stage.setTitle("Results");
+          stage.setWidth(previousDimension.getWidth());
+          stage.setHeight(previousDimension.getHeight());
+        }catch(FileNotFoundException e){
+          ExceptionDialog exceptionDialog=new ExceptionDialog(e, stage);
+        }//end-try-catch
       }
     });
   }

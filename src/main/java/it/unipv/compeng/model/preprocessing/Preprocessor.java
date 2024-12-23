@@ -4,12 +4,22 @@ import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.StopList;
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable;
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
+import javafx.scene.paint.Stop;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.*;
 
+/***********************************************************/
+//ABSTRACT REPRESENTATION OF A PREPROCESSOR.
+//TEMPLATE METHOD IS USED TO LET SUBCLASSES DEFINE BY OVERRIDING
+//HOW EACH STEP MUST BE COMPUTED. IF NOT THE DEFAULT IMPLEMENTATION
+//PREVAILS.
+//IN GENERAL, EACH PREPROCESSOR WORKS WITH A DATASET ITERATOR
+//FOR COMPUTATIONAL PURPOSES, THIS WAY IT'S NOT NEEDED TO LOAD EVERYTHING
+//IN MEMORY PRIOR AND JUST LOAD IT WHEN NEEDED
+/***********************************************************/
 public abstract class Preprocessor implements Serializable{
   /********************************/
   //Attributes
@@ -41,7 +51,11 @@ public abstract class Preprocessor implements Serializable{
   }
 
   public final Term process(String s){
-    return stem(caseFold(normalize(s)));
+    if(!StopList.getInstance().contains(s) && !s.isEmpty()){
+      return stem(caseFold(normalize(s)));
+    }else{
+      return null;
+    }//end-if
   }
 
   public final Term[] processNext() throws IOException{

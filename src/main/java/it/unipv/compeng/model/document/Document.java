@@ -3,6 +3,9 @@ package it.unipv.compeng.model.document;
 import java.io.IOException;
 import java.util.Comparator;
 
+/***********************************************************/
+//ABSTRACT REPRESENTATION OF A DOCUMENT
+/***********************************************************/
 public abstract class Document{
   /********************************/
   //Attributes
@@ -10,10 +13,6 @@ public abstract class Document{
   protected String title;
   protected int docId;
   protected int score=0;
-  /********************************/
-  //Constructors
-  /********************************/
-
   /********************************/
   //Getter/Setter
   /********************************/
@@ -27,10 +26,6 @@ public abstract class Document{
 
   public int getScore(){
     return score;
-  }
-
-  public void incrementScore(int score){
-    this.score+=score;
   }
 
   public static Comparator<Document> getDocIdComparator(){
@@ -50,11 +45,15 @@ public abstract class Document{
       }
     };
   }
-
   /********************************/
   //Methods
   /********************************/
+  public void incrementScore(int score){
+    this.score+=score;
+  }
+
   public abstract String read() throws IOException;
+
   public abstract Document clone();
 
   @Override

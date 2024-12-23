@@ -5,6 +5,11 @@ import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
 
 import java.util.ArrayList;
+
+/***********************************************************/
+//CLASS DATASET IS A CONCRETE IMPLEMENTATION OF IDatasetIterable
+//FROM ITERATOR DESIGN PATTERN
+/***********************************************************/
 public class Dataset implements IDatasetIterable{
   /********************************/
   //Attributes
@@ -16,10 +21,6 @@ public class Dataset implements IDatasetIterable{
   public Dataset(){
     documents = new ArrayList<>();
   }
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/

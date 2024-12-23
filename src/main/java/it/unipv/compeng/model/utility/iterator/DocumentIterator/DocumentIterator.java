@@ -2,6 +2,12 @@ package it.unipv.compeng.model.utility.iterator.DocumentIterator;
 
 import it.unipv.compeng.model.document.Dataset;
 import it.unipv.compeng.model.document.Document;
+import it.unipv.compeng.model.utility.Logger;
+
+/***********************************************************/
+//CLASS DocumentIterator FROM ITERATOR PATTERN, ACTS A CONCRETE
+//ITERATOR.
+/***********************************************************/
 public class DocumentIterator implements IDatasetIterator{
   /********************************/
   //Attributes
@@ -28,7 +34,7 @@ public class DocumentIterator implements IDatasetIterator{
   @Override
   public Document next(){
     if (!hasNext()) {
-      System.out.println(this + " Has no more documents to iterate");
+      Logger.getInstance().log(this + " Has no more documents to iterate");
       return null;
     }//end-if
 

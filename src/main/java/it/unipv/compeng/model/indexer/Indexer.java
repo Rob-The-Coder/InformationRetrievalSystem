@@ -2,9 +2,14 @@ package it.unipv.compeng.model.indexer;
 
 import it.unipv.compeng.exceptions.InvalidStrategyException;
 import it.unipv.compeng.model.index.Index;
+import it.unipv.compeng.model.utility.Logger;
 
 import java.util.concurrent.*;
 
+/***********************************************************/
+//CLASS Indexer OFFERS MANY UTILITY METHODS TO PROCESS THE
+//INDEXING METHOD. ACTS AS THE CONTEXT IN THE STRATEGY PATTERN
+/***********************************************************/
 public class Indexer{
   /********************************/
   //Attributes
@@ -21,12 +26,6 @@ public class Indexer{
   /********************************/
   //Getter/Setter
   /********************************/
-  public void setIndex(Index index){
-    this.index = index;
-  }
-  /********************************/
-  //Methods
-  /********************************/
   public static Indexer getInstance(){
     if(instance==null){
       instance=new Indexer();
@@ -34,10 +33,18 @@ public class Indexer{
     return instance;
   }
 
+  public void setIndex(Index index){
+    this.index = index;
+  }
+  /********************************/
+  //Methods
+  /********************************/
+  //Method init initialize executor service to use all the available processors
   public void init(){
     executor=Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
   }
 
+  //Method index delegates the indexing algorithm to the specified strategy (if set)
   public void index() throws InvalidStrategyException{
     if(index.getStrategy()==null){
       throw new InvalidStrategyException();
@@ -46,10 +53,11 @@ public class Indexer{
     }//end-if
   }
 
+  //Method stop wait for all the running tasks to finish execution
   public void stop(){
     executor.shutdown();
     while(!executor.isTerminated()){}
-    System.out.println("Indexing complete.");
+    Logger.getInstance().log("Indexing complete.");
   }
   /********************************/
 }

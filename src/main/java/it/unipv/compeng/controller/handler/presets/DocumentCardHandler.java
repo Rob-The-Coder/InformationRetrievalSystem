@@ -2,11 +2,11 @@ package it.unipv.compeng.controller.handler.presets;
 
 import it.unipv.compeng.model.document.Document;
 import it.unipv.compeng.view.presets.DocumentCard;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 
-import javax.swing.*;
-
+/***********************************************************/
+//CLASS DocumentCardHandler PER MVC ARCHITECTURE, HANDLES ALL THE
+//USER INTERACTION WITH THE DocumentCard view
+/***********************************************************/
 public class DocumentCardHandler {
   /********************************/
   //Attributes
@@ -21,10 +21,6 @@ public class DocumentCardHandler {
     this.document = document;
     initComponents();
   }
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/

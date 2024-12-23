@@ -1,11 +1,11 @@
 package it.unipv.compeng.model.utility.iterator.DocumentIterator;
 
 import it.unipv.compeng.model.document.Document;
-public interface IDatasetIterator{
-  /********************************/
-  //Constants
-  /********************************/
 
+/***********************************************************/
+//INTERFACE IDatasetIterator FROM ITERATOR PATTERN
+/***********************************************************/
+public interface IDatasetIterator{
   /********************************/
   //Methods
   /********************************/

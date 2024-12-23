@@ -4,12 +4,14 @@ import atlantafx.base.controls.Card;
 import atlantafx.base.controls.Tile;
 import atlantafx.base.theme.Styles;
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
 import org.kordamp.ikonli.material2.Material2MZ;
+
+/***********************************************************/
+//CLASS DocumentCard REPRESENTS A SINGLE CARD INSIDE THE
+//PAGINATION
+/***********************************************************/
 public class DocumentCard extends Card{
   /********************************/
   //Attributes

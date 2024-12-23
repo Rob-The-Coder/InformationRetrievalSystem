@@ -1,16 +1,15 @@
 package it.unipv.compeng.model.indexer;
 
 import it.unipv.compeng.model.index.Index;
-import it.unipv.compeng.model.preprocessing.Preprocessor;
 import it.unipv.compeng.model.term.Term;
+import it.unipv.compeng.model.utility.Logger;
 
 import java.io.*;
 
+/***********************************************************/
+//CLASS SPIMIIndexingStrategy IMPLEMENTS THE SINGLE PASS IN MEMORY INDEXING ALGORITHM
+/***********************************************************/
 public class SPIMIIndexingStrategy extends RunnableIndexingStrategy{
-  /********************************/
-  //Attributes
-  /********************************/
-
   /********************************/
   //Constructors
   /********************************/
@@ -18,22 +17,18 @@ public class SPIMIIndexingStrategy extends RunnableIndexingStrategy{
     super(index);
   }
   /********************************/
-  //Getter/Setter
-  /********************************/
-
-  /********************************/
   //Methods
   /********************************/
   @Override
   public void buildIndex() throws IOException{
     //SPIMI algorithm
-    System.out.println("SPIMI");
+    Logger.getInstance().log("SPIMI");
 
     Term[] terms=null;
 
     int count=0;
     while(super.index.getPreprocessor().hasNextToProcess()){
-      System.out.println("Indexing document: "+ count);
+      Logger.getInstance().log("SPIMI: indexing document "+ count);
       terms=super.index.getPreprocessor().processNext();
 
       for(Term term : terms){

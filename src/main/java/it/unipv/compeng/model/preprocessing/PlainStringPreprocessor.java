@@ -3,12 +3,14 @@ package it.unipv.compeng.model.preprocessing;
 import it.unipv.compeng.model.term.StringTerm;
 import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable;
-import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterator;
-public class PlainStringPreprocessor extends Preprocessor{
-  /********************************/
-  //Attributes
-  /********************************/
 
+/***********************************************************/
+//CONCRETE IMPLEMENTATION OF A PREPROCESSOR. IN PARTICULAR
+//THIS PREPROCESSOR DOES NOT STEM WORDS, THIS BECAUSE SOME
+//INDEXES WORK ON THE WHOLE TERM AND NOT ON THE STEMMED VERSION
+//LIKE SOUNDEX INDEX
+/***********************************************************/
+public class PlainStringPreprocessor extends Preprocessor{
   /********************************/
   //Constructors
   /********************************/
@@ -17,10 +19,6 @@ public class PlainStringPreprocessor extends Preprocessor{
   }
 
   public PlainStringPreprocessor(){}
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/

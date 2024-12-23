@@ -6,6 +6,12 @@ import it.unipv.compeng.model.utility.VariableByteCode;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/***********************************************************/
+//CLASS PostingList GIVES AN ABSTRACT REPRESENTATION OF A
+//POSTING LIST.
+//DURING INDEXING THE POSTING PROCESS USES ARRAYLISTS WHICH ARE
+//THEN SERIALIZED USING VariableByteCode.
+/***********************************************************/
 public abstract class PostingList{
   /********************************/
   //NESTED INNER CLASS
@@ -79,12 +85,10 @@ public abstract class PostingList{
     this.compressedTermDocCounts=new VariableByteCode(false);
   }
   /********************************/
-  //Getter/Setter
-  /********************************/
-
-  /********************************/
   //Methods
   /********************************/
+  public abstract void addToPostingList(Term t);
+
   public int insertDocId(Term t){
     Node node=new Node(t.getDocId(), scoreWeight);
     int pos=Collections.binarySearch(nodes, node);
@@ -97,8 +101,6 @@ public abstract class PostingList{
 
     return pos;
   }
-
-  public abstract void addToPostingList(Term t);
 
   public int[] docIdsToArray(){
     return compressedDocIds.toArray();

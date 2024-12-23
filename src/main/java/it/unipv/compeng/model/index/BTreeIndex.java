@@ -6,11 +6,11 @@ import it.unipv.compeng.model.postinglist.PostingList;
 import it.unipv.compeng.model.preprocessing.PorterStringPreprocessor;
 import it.unipv.compeng.model.term.Term;
 
+/***********************************************************/
+//CONCRETE IMPLEMENTATION OF AN INDEX USING THE PREFIX BTREE AS
+//DICTIONARY
+/***********************************************************/
 public class BTreeIndex extends Index{
-  /********************************/
-  //Attributes
-  /********************************/
-
   /********************************/
   //Constructors
   /********************************/
@@ -23,10 +23,6 @@ public class BTreeIndex extends Index{
   /********************************/
   //Getter/Setter
   /********************************/
-
-  /********************************/
-  //Methods
-  /********************************/
   @Override
   public PostingList getPostingList(Term t){
     return super.dictionary.getPostingList(t);
@@ -34,10 +30,16 @@ public class BTreeIndex extends Index{
 
   @Override
   public PostingList getPostingList(String s) {
-    System.out.println(getCorrectTerm(s));
-    return getPostingList(getCorrectTerm(s));
+    Term t=getCorrectTerm(s);
+    if(t!=null){
+      return getPostingList(t);
+    }else{
+      return null;
+    }//end-if
   }
-
+  /********************************/
+  //Methods
+  /********************************/
   @Override
   public void addToDictionary(Term t){
     super.dictionary.insert(t, new PlainPostingList(3));

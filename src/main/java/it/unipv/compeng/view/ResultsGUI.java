@@ -16,8 +16,6 @@ import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Screen;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.kordamp.ikonli.material2.Material2AL;
@@ -25,6 +23,10 @@ import org.kordamp.ikonli.material2.Material2MZ;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
+/***********************************************************/
+//CLASS ResultsGUI IS THE VIEW FOR THE RETRIEVED RESULTS
+/***********************************************************/
 public class ResultsGUI{
   /********************************/
   //Attributes
@@ -143,7 +145,6 @@ public class ResultsGUI{
     GridPane gp=new GridPane();
     gp.addRow(0, navBarHBox);
     gp.addRow(1, separator1, separator2);
-//    gp.addRow(1, resultsHBox);
     gp.addRow(2, resultsScrollPane, documentClickedCard);
 
     ColumnConstraints columnConstraints=new ColumnConstraints();

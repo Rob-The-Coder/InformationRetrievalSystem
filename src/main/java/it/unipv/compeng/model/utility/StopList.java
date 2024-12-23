@@ -1,11 +1,15 @@
 package it.unipv.compeng.model.utility;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
+
+/***********************************************************/
+//CLASS StopList CONTAINS A LIST READ FROM PROPERTIES WHICH
+//CONTAINS WORDS THAT NEED TO BE SKIPPED DURING PREPROCESSING
+/***********************************************************/
 public class StopList extends ArrayList<String>{
   /********************************/
   //Attributes
@@ -32,8 +36,5 @@ public class StopList extends ArrayList<String>{
     return instance;
   }
   /********************************/
-  //Methods
-  /********************************/
 
-  /********************************/
 }

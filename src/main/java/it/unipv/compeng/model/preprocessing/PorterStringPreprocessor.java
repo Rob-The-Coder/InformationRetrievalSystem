@@ -4,6 +4,10 @@ import it.unipv.compeng.model.term.StringTerm;
 import it.unipv.compeng.model.term.Term;
 import it.unipv.compeng.model.utility.iterator.DocumentIterator.IDatasetIterable;
 
+/***********************************************************/
+//CONCRETE IMPLEMENTATION OF A PREPROCESSOR WHICH USES THE
+//PORTER ALGORITHM TO STEM TERMS
+/***********************************************************/
 public class PorterStringPreprocessor extends Preprocessor{
   /********************************/
   //Attributes
@@ -17,10 +21,6 @@ public class PorterStringPreprocessor extends Preprocessor{
   }
 
   public PorterStringPreprocessor(){}
-  /********************************/
-  //Getter/Setter
-  /********************************/
-
   /********************************/
   //Methods
   /********************************/

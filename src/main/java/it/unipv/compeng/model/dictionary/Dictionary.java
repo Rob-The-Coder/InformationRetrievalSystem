@@ -5,10 +5,16 @@ import it.unipv.compeng.model.term.Term;
 
 import java.io.Serializable;
 
+/***********************************************************/
+//ABSTRACT CLASS Dictionary
+/***********************************************************/
 public abstract class Dictionary<T extends Term, P extends PostingList> implements Serializable{
+  /********************************/
+  //Methods
+  /********************************/
   public abstract void insert(T term, P postingList);
   public abstract T search(T term);
   public abstract void traverse();
-  public abstract void addToPostingList(Term t);
-  public abstract PostingList getPostingList(Term t);
+  public abstract P getPostingList(Term t);
+  /********************************/
 }
